@@ -1,0 +1,37 @@
+{% extends 'base.html' %} {% load static %}{% block content %}
+
+<section class="section-conten padding-y bg">
+  {% include 'includes/alerts.html' %}
+  <div class="container">
+    <div class="row">
+      {% include 'includes/dashboard_sidebar.html' %}
+      <main class="col-md-9">
+        <article class="card">
+          <header class="card-header">
+            <strong class="d-inline-block mr-3">Logged in as:</strong>
+            <span>{{user.full_name}}</span>
+          </header>
+        
+              
+              <div class="col-md-6">
+                <div class="card" style="text-align: center">
+                  <div class="card-body">
+                    <img src="{% if userprofile.profile_picture %}{{ userprofile.profile_picture.url }}{% else %}{% static 'default/default-user.png' %}{% endif %}" alt="User Profile Picture" width="50" height="50" style="border-radius:50%;">
+                    <p class="mb-0">{{user.email}}</p>
+                    <p>{{user.phone_number}}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- row.// -->
+          </!--div>
+          <!-- card-body .// -->
+        </article>
+        <!-- order-group.// -->
+      </main>
+    </div>
+    <!-- row.// -->
+  </div>
+</section>
+
+{% endblock %}

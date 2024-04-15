@@ -1,0 +1,78 @@
+    /* Add custom styles for Sign In and Sign Up buttons */
+    .navbar-nav .nav-link {
+      padding: 8px 15px;
+      margin: 0 5px;
+      border-radius: 5px;
+    }
+
+    .navbar-nav .nav-link:hover {
+      background-color: #ddd;
+    }
+
+    /* Additional styling for Sign In button */
+    .navbar-nav .nav-link.sign {
+      background-color: #007bff;
+      color: #fff;
+    }
+
+    /* Add space between Sign In and Sign Up buttons */
+    .navbar-nav .nav-link.signup {
+      margin-right: 10px; /* Adjust the value as needed */
+    }
+    
+    
+    
+    
+            body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+
+        header {
+            background-color: #3498db;
+            color: white;
+            text-align: center;
+            padding: 1em 0;
+        }
+
+        section {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: white;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1,
+        h2,
+        h3 {
+            color: #3498db;
+        }
+
+        .advantage-list {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .advantage-list li {
+            margin-bottom: 10px;
+        }
+
+        .call-to-action {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .cta-button {
+            background-color: #3498db;
+            color: white;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+            font-size: 16px;
+        }
