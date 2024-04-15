@@ -1,57 +1,41 @@
-from datetime import timezone
-from django.db import models
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
-from django.conf import settings
+from django.db import models
 from django.utils import timezone
-from phonenumber_field.modelfields import PhoneNumberField
+from nucleus import settings  # Make sure to replace 'nucleus' with your app name if necessary
 
-# Create your models here.
+
 class MyAccountManager(BaseUserManager):
-    def create_user(self, first_name, last_name, date_of_birth, gender, email, username, password=None, referral=None, profession=None):
+    def create_user(self, first_name, last_name, username, email, password=None, **extra_fields):
         if not email:
             raise ValueError("User must have an email address")
 
         if not username:
             raise ValueError("User must have a username")
 
-        if referral is None or profession is None:
-            raise ValueError("Referral and profession are required for regular users.")
-
         user = self.model(
             email=self.normalize_email(email),
             username=username,
             first_name=first_name,
             last_name=last_name,
-            date_of_birth=date_of_birth,
-            gender=gender,
-            referral=referral,
-            profession=profession,
+            **extra_fields,
         )
 
         user.set_password(password)
-        user.is_active = True
         user.save(using=self._db)
         return user
 
-    def create_superuser(self, first_name, last_name, date_of_birth, gender, email, username, password=None):
-        user = self.model(
-            email=self.normalize_email(email),
-            username=username,
-            password=password,
-            first_name=first_name,
-            last_name=last_name,
-            date_of_birth=date_of_birth,
-            gender=gender,
-            referral=None,  # No referral for superuser
-            profession=None,  # No profession for superuser
-        )
-        user.set_password(password)
-        user.is_admin = True
-        user.is_staff = True
-        user.is_superuser = True
-        user.is_active = True
-        user.save(using=self._db)
-        return user
+    def create_superuser(self, first_name, last_name, email, username, password=None, **extra_fields):
+        extra_fields.setdefault('is_admin', True)
+        extra_fields.setdefault('is_staff', True)
+        extra_fields.setdefault('is_active', True)
+        extra_fields.setdefault('is_superadmin', True)
+
+        if any(extra_fields.values()):
+            raise ValueError('Superuser must not have any extra fields.')
+
+        return self.create_user(first_name, last_name, email, username, password, **extra_fields)
 
 
 class Account(AbstractBaseUser):
@@ -60,10 +44,10 @@ class Account(AbstractBaseUser):
     date_of_birth = models.DateField(default=timezone.now)
 
     GENDER_CHOICES = (
-        ("M","Male"),
-        ("F","Female"),
-        ("O","Other")
-        )
+        ("M", "Male"),
+        ("F", "Female"),
+        ("O", "Other")
+    )
     gender = models.CharField(max_length=1, choices=GENDER_CHOICES, default='O')
 
     username = models.CharField(max_length=50, unique=True)
@@ -71,7 +55,6 @@ class Account(AbstractBaseUser):
     phone_number = models.CharField(max_length=15)
     referral = models.ForeignKey('Referral', on_delete=models.SET_NULL, null=True, blank=True)
     profession = models.ForeignKey('Profession', on_delete=models.SET_NULL, null=True, blank=True)
-
 
     # required
     date_joined = models.DateTimeField(auto_now_add=True)
@@ -82,7 +65,7 @@ class Account(AbstractBaseUser):
     is_superadmin = models.BooleanField(default=False)
 
     USERNAME_FIELD = "email"
-    REQUIRED_FIELDS = ["username", "first_name", "last_name","date_of_birth","gender"]
+    REQUIRED_FIELDS = ["username", "first_name", "last_name", "date_of_birth", "gender", "referral", "profession"]
 
     objects = MyAccountManager()
 
@@ -100,29 +83,29 @@ class Account(AbstractBaseUser):
 
 
 class UserProfile(models.Model):
-    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     address_line_1 = models.CharField(blank=True, max_length=100)
     address_line_2 = models.CharField(blank=True, max_length=100)
-    phone_number = PhoneNumberField()
+    phone_number = models.CharField(max_length=15)
     profile_picture = models.ImageField(upload_to="userprofile", blank=True, default='userprofile/default-user.png')
-
-
     city = models.CharField(blank=True, max_length=20)
     state = models.CharField(blank=True, max_length=20)
     country = models.CharField(blank=True, max_length=20)
-   
 
     def __str__(self):
         return self.user.first_name
 
     def full_address(self):
         return f"{self.address_line_1} {self.address_line_2}"
+
+
 class Referral(models.Model):
     name = models.CharField(max_length=100)
 
     def __str__(self):
         return self.name
     
+
 class Profession(models.Model):
     name = models.CharField(max_length=100)
 
@@ -130,3 +113,7 @@ class Profession(models.Model):
         return self.name
 
 
+@receiver(post_save, sender=Account)
+def create_user_profile(sender, instance, created, **kwargs):
+    if created:
+        UserProfile.objects.create(user=instance)
