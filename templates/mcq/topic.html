@@ -73,7 +73,7 @@
                     {% for topic in topics %}
                     <div class="col-12 col-lg-6 mb-3">
                         <div class="card shadow p-3">
-                            <a href="/mcq.html" style="color:black;">
+                            <a href="{% url 'mcq_quiz' topic_slug=topic.slug question_num=1 %}" style="color:black;">
                                 <div class="d-flex justify-content-between">
                                     <div class="d-flex">
                                         <p><strong>Topic: {{ topic.topic_name }}</strong><br/>
