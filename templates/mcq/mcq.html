@@ -1,0 +1,308 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://cdn.lineicons.com/4.0/lineicons.css" rel="stylesheet" />
+  
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet"
+  integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ" crossorigin="anonymous">
+  <link href="{% static 'css/global.css' %}"  rel="stylesheet"/>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+</head>
+<body>
+  <div class="wrapper">
+    <aside id="sidebar">
+      <div class=" d-flex mb-0">
+          <button class="toggle-btn " type="button">
+              <img src="{% static 'images/NucleusLogo.png' %}" alt="NucleusLogo" style="width: 45px;" class="mt-1"/> 
+          </button>
+          <div class="sidebar-logo pt-1">
+              <a href="{% url 'home_new' %}" style="text-align: start; color:white;"> NUCLEUS</a>
+          </div>
+      </div>
+
+      <hr style="color:rgb(249, 248, 248); margin-top: 0px;"/>
+      <ul class="sidebar-nav mt-0">
+          
+        <li class=" sidebar-item">
+          <a href="{% url 'home_new' %}" class="sidebar-link" aria-current="page">
+            <i class="lni lni-home" width="16" height="16" ></i>
+            <span>Home</span>
+          </a>
+        </li>
+          <li class="sidebar-item">
+              <a href="{% url 'subject_list' %}" class=" sidebar-link" aria-current="page">
+                  <i class="bi bi-stack"></i>
+                  <span>Question Bank</span>
+              </a>
+          </li>
+          <li class="sidebar-item">
+              <a href="#" class="sidebar-link" aria-current="page">
+                  <i class="bi bi-mortarboard"></i>
+                  <span>Mock Exams</span>
+              </a>
+          </li>
+          <li class="sidebar-item">
+              <a href="#" class="sidebar-link" aria-current="page">
+                  <i class="bi bi-bar-chart"></i>
+                  <span>Performance</span>
+              </a>
+          </li>
+          
+      </ul>
+      <hr style="color:rgb(249, 248, 248);" />
+        <li>
+          <a href="#" class="sidebar-link">
+            <img src="https://github.com/mdo.png" alt="" width="30" class="rounded-circle me-2">
+              <span>Manoj</span>
+          </a>
+      </li>
+  </aside>
+    <div class="main">
+      <div class="container">
+        <div class="row d-flex justify-content-center">
+          <div class="col-12 col-md-10">
+            <div class="d-flex justify-content-between shadow mt-3">
+              <button class="btn">
+                <i class="bi bi-arrow-left-circle-fill" style="color:#0d6efd; width:26px; height:26px; font-weight:600;"></i>
+              </button>
+              <p class="pt-3">Question  {{ question_num }} of {{ total_questions }}</p>
+              <button class="btn">
+                <i class="bi bi-arrow-right-circle-fill" style="color:#0d6efd; width:26px; height:26px; font-weight:600;"></i>
+              </button>
+            </div>
+            <p class="pt-3" >{{ current_question }} </p>
+            <div class="card mt-4">
+              <li>
+                
+                {% for option in opt_values %}
+                 <input type="radio" id="option{{ forloop.counter }}" class="m-3 mt-0 mb-0" name="selected_option" value="{{ option }}">
+                  <label for="option{{ forloop.counter }}">{{ option }}</label><br>
+                {% endfor %}
+              </li>
+            </div>
+            <div class="d-flex justify-content-between">
+            <button type="submit" class="btn btn-primary mt-4">Submit answer</button>
+            
+
+              <div class="popover mt-4">
+                <button class="popover-btn btn "><i class="bi bi-bookmark"></i> Bookmark</button>
+                <div class="popover-content">
+                  <ul>
+                    <li data-value="go">Important</li>
+                    <li data-value="went">Star</li>
+                    <li data-value="gone">Doubt</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            
+          </div>
+        </div>
+        
+      </div>
+
+      <div class="conatiner">
+        <div class="row d-flex justify-content-center">
+          <div class=" col-12 col-md-9 card mt-5 mb-5">
+          <div class="navbar d-flex justify-content-around">
+            <button class="nav-btn" data-target="notes">Notes</button>
+            <button class="nav-btn" data-target="overview">Overview</button> 
+            <button class="nav-btn" data-target="Discussions">Discussions</button>
+            <button class="nav-btn" data-target="Resources">Resources</button>
+            <button class="nav-btn" data-target="learning-tools">Learning Tools</button>
+            </div>
+          <hr style="margin-top:0px;"/>
+
+          <div id="notes" class="content text-center p-5">
+            <h2>This Is Notes</h2>
+          </div>
+
+          
+            <div id="overview" class="content  p-5">
+              <div class="accordion accordion-flush" id="accordionFlushExample">
+                <div class="accordion-item">
+                  <h2 class="accordion-header" id="flush-headingOne">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseOne" aria-expanded="false" aria-controls="flush-collapseOne">
+                      Topic  : Vasculitis
+                    </button>
+                  </h2>
+                  <div id="flush-collapseOne" class="accordion-collapse collapse" aria-labelledby="flush-headingOne" data-bs-parent="#accordionFlushExample">
+                    <div class="accordion-body">
+                      <div class="conatiner">
+                        <div class="row d-flex">
+                          <div class="col-12">
+                          <div>
+                            <div class="text-dark p-2">
+                                <div class="hovering">
+                                <div class="d-flex">
+                                    <label for="Kawasaki’s" class="p-2">1. Kawasaki’s – Clinical Features  <label/>
+                                    
+                                </div>
+                                <p class="p-3 pt-0 pb-0"><i class="bi bi-clipboard2-check"></i> 5 MCQS</p>
+                               </div>
+                               <div class="hovering">
+                               <div class="d-flex">
+                                <label for="Cryoglobulinemia" class="p-2">2. Cryoglobulinemia</label>
+                            </div>
+                           <p class="p-3 pt-0 pb-0"><i class="bi bi-clipboard2-check"></i> 7 MCQS</p>
+                        </div>
+                        <div class="hovering">
+                           <div class="d-flex">
+                            <label for="Takayasu" class="p-2">3 .MC vessel involved in Takayasu</label>
+                        </div>
+                       <p class="p-3 pt-0 pb-0"><i class="bi bi-clipboard2-check"></i> 8 MCQS</p>
+                    </div>
+                              </div>
+                            </div>
+              
+                    </div>
+                    </div>
+                    </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          
+            
+          
+            <div id="Discussions" class="content text-center p-5">
+              <div class="container mt-4">
+                <!-- Topic Header -->
+                <div class="topic-header">
+                  <h1>Medicine Discussions</h1>
+                  <p>Join the conversation about the latest trends and developments in medicine!</p>
+                </div>
+                <!-- Comments Section -->
+                <div class="comments-section">
+                  <!-- Comment 1 -->
+                  <div class="comment">
+                    <p class="user">John Doe</p>
+                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin vehicula aliquam eros, eu vehicula lorem ultrices quis. Nullam vel nulla nec ante sodales mollis nec non neque.</p>
+                    <p class="timestamp">Posted: April 17, 2024</p>
+                  </div>
+                  <!-- Comment 2 -->
+                  <div class="comment">
+                    <p class="user">Jane Smith</p>
+                    <p>Suspendisse potenti. Nunc lacinia hendrerit turpis, nec lobortis nunc finibus nec. Sed ac justo at nisi auctor accumsan.</p>
+                    <p class="timestamp">Posted: April 16, 2024</p>
+                  </div>
+                  <!-- Add your comment form -->
+                  <form class="mt-4">
+                    <div class="form-group">
+                      <label for="comment">Join the discussion:</label>
+                      <textarea class="form-control" id="comment" rows="3"></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Post Comment</button>
+                  </form>
+                </div>
+              </div>
+            </div>
+          
+            <div id="Resources" class="content text-center p-5">
+              <h2>This Is Resources</h2>
+            </div>
+          
+            <div id="learning-tools" class="content text-center p-5">
+              <h2>This Is Learning Tools</h2>
+            </div>
+          
+            
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+   
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js" integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy" crossorigin="anonymous"></script>
+  
+  <script>
+    const hamBurger = document.querySelector(".toggle-btn");
+    hamBurger.addEventListener("click", function () {
+      document.querySelector("#sidebar").classList.toggle("expand");
+      setTimeout(function () {
+        document.querySelector("#sidebar").style.transition = 'all .3s ease-out';
+      }, 300); 
+    });
+
+    const radioButtons = document.querySelectorAll('input[type="radio"]');
+    radioButtons.forEach(button => {
+      button.addEventListener('click', function() {
+        radioButtons.forEach(otherButton => {
+          if (otherButton !== button) {
+            otherButton.checked = false;
+          }
+        });
+      });
+    });
+  </script>
+    <script>
+
+
+    document.addEventListener("DOMContentLoaded", function() {
+  const dropdownBtns = document.querySelectorAll('.dropdown-btn');
+
+  dropdownBtns.forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      const dropdownContent = this.nextElementSibling;
+      dropdownContent.classList.toggle('show');
+    });
+  });
+});
+
+document.addEventListener('DOMContentLoaded', function() {
+  document.getElementById('notes').classList.add('active');
+
+  document.querySelectorAll('.nav-btn').forEach(button => {
+    button.addEventListener('click', function() {
+      const target = this.getAttribute('data-target');
+      document.querySelectorAll('.content').forEach(content => {
+        content.classList.remove('active');
+      });
+      document.getElementById(target).classList.add('active');
+    });
+  });
+});
+
+document.querySelectorAll('.nav-btn').forEach(button => {
+      button.addEventListener('click', function() {
+        const target = this.getAttribute('data-target');
+        document.querySelectorAll('.content').forEach(content => {
+          content.classList.remove('active');
+        });
+        document.getElementById(target).classList.add('active');
+      });
+    });
+
+</script>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+  var popoverBtn = document.querySelector('.popover-btn');
+  var popoverContent = document.querySelector('.popover-content');
+
+  popoverBtn.addEventListener('click', function() {
+    popoverContent.style.display = popoverContent.style.display === 'block' ? 'none' : 'block';
+  });
+
+  var popoverOptions = document.querySelectorAll('.popover-content ul li');
+  popoverOptions.forEach(function(option) {
+    option.addEventListener('click', function() {
+      popoverContent.style.display = 'none';
+    });
+  });
+});
+
+</script>
+
+</body>
+</html>

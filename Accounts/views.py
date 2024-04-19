@@ -118,7 +118,7 @@ class LoginView(View):
         if user is not None:
             auth.login(request, user)
             messages.success(request, "You are now logged in.")
-            return redirect('home')
+            return redirect('home_new')
         else:
             messages.error(request, "Invalid login credentials")
             return redirect("login")

@@ -3,4 +3,4 @@ __pycache__/
 .env
 local_settings.py
 db.sqlite3
-nucleus_env
+nucleus-env
