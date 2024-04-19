@@ -20,16 +20,7 @@ class SubjectView(ListView):
             subjects = Subject.objects.all()  # Retrieve all subjects from the database
             return render(request, self.template_name, {'subjects': subjects})
 
-# class TopicView(ListView):
-#     model = Topic
-#     template_name= 'mcq/topic.html'
-#     @method_decorator(login_required)
-#     def get(self, request):
-#        if request.method == 'GET':
-#             subject_slug = Subject.subject_name
-#             subjects= Subject.objects.all()  # Retrieve all subjects from the database
-#             topic = Topic
-#             return render(request, self.template_name, {'subjects': subjects})
+
 
 class TopicListView(ListView):
     model = Topic
@@ -37,8 +28,26 @@ class TopicListView(ListView):
     context_object_name = 'topics'
 
     @method_decorator(login_required)
+    def dispatch(    self, *args, **kwargs):
+        return super().dispatch(*args, **kwargs)
+
     def get_queryset(self):
-        subject_slug = self.Kwargs['subject_slug']
-        subject = get_object_or_404(Subject, slug=subject_slug)
-        return Topic.objects.filter(subject=subject).annotate(subtopic_count=Count('subtopic'))
+        request = self.request
+        print("Request:", request)
+        queryset = super().get_queryset()
+        print("Original queryset:", queryset) 
+        subject_slug = self.kwargs.get('subject_slug')
+        print("Subject slug:", subject_slug) 
+        if subject_slug:
+            subject = get_object_or_404(Subject, slug=subject_slug)
+            return queryset.filter(subject_name=subject).annotate(subtopic_count=Count('subtopic'))
+        else:
+            return queryset
         
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        subject_slug = self.kwargs.get('subject_slug')
+        if subject_slug:
+            subject = get_object_or_404(Subject, slug=subject_slug)
+            context['subject'] = subject
+        return context
