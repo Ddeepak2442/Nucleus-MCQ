@@ -1,0 +1,304 @@
+
+.card-img-top{
+    height: 200px;
+
+  }
+::after,
+::before {
+box-sizing: border-box;
+margin: 0;
+padding: 0;
+}
+
+a {
+text-decoration: none;
+}
+
+li {
+list-style: none;
+}
+
+h1 {
+font-weight: 600;
+font-size: 1.5rem;
+}
+
+body {
+font-family: 'Poppins', sans-serif;
+}
+
+.wrapper {
+display: flex;
+}
+
+.main {
+min-height: 100vh;
+width: calc(100% - 70px); /* Adjust width to accommodate the sidebar */
+margin-left: 70px; /* Ensure the content doesn't overlap with the sidebar */
+transition: margin-left .3s ease-out; /* Apply ease-out transition to margin */
+background-color: #fafbfe;
+}
+
+#sidebar.expand + .main {
+margin-left: 260px; /* Adjust margin when sidebar expands */
+}
+
+#sidebar {
+position: fixed; /* Add fixed position */
+top: 0;
+left: 0;
+height: 100%;
+width: 70px;
+min-width: 70px;
+z-index: 1000;
+transition: all .3s ease-out; /* Add ease-out transition */
+background-color:black;
+display: flex;
+flex-direction: column;
+}
+
+#sidebar.expand {
+width: 260px;
+min-width: 260px;
+}
+
+
+
+.toggle-btn {
+background-color: transparent;
+cursor: pointer;
+border: 0;
+padding: 1rem 1rem;
+}
+
+
+.sidebar-logo {
+margin: auto 0;
+}
+
+.sidebar-logo a {
+font-size: 30px;
+font-weight: 600;
+}
+
+#sidebar:not(.expand) .sidebar-logo,
+#sidebar:not(.expand) a.sidebar-link span {
+display: none;
+padding:10px;
+}
+
+.sidebar-nav {
+  padding :0 0;
+flex: 1 1 auto;
+
+}
+
+a.sidebar-link {
+padding: .625rem 1.625rem;
+color: #FFF;
+display: block;
+font-size: 0.9rem;
+white-space: nowrap;
+border-left: 3px solid transparent;
+}
+
+.sidebar-link i {
+font-size: 1.1rem;
+margin-right: .75rem;
+color:white;
+}
+.sidebar-link span {
+color:white;
+}
+
+.sidebar-item {
+position: relative;
+}
+
+/* Primary color for hovering */
+.sidebar-item:hover .sidebar-link {
+background-color: #007bff; /* Primary color */
+color: #fff; /* White text */
+border-radius:5px;
+}
+
+/* White color for icon */
+.sidebar-item:hover .sidebar-link .lni,
+.sidebar-item:hover .sidebar-link .bi {
+color: #fff !important;
+}
+
+.sidebar-item:hover .sidebar-link span{
+color: #fff !important;
+}
+
+
+#sidebar:not(.expand) .sidebar-item .sidebar-dropdown {
+position: absolute;
+top: 0;
+left: 70px;
+background-color: #0e2238;
+padding: 0;
+min-width: 15rem;
+display: none;
+}
+
+#sidebar:not(.expand) .sidebar-item:hover .has-dropdown+.sidebar-dropdown {
+display: block;
+max-height: 15em;
+width: 100%;
+opacity: 1;
+}
+
+#sidebar.expand .sidebar-link[data-bs-toggle="collapse"]::after {
+border: solid;
+border-width: 0 .075rem .075rem 0;
+content: "";
+display: inline-block;
+padding: 2px;
+position: absolute;
+right: 1.5rem;
+top: 1.4rem;
+transform: rotate(-135deg);
+transition: all .2s ease-out;
+}
+
+#sidebar.expand .sidebar-link[data-bs-toggle="collapse"].collapsed::after {
+transform: rotate(45deg);
+transition: all .2s ease-out;
+}
+
+.searchInput{
+width:100%;
+}
+
+@media (max-width: 799px) {
+
+.adjustSmallscreen{
+    display: flex;
+    flex-direction: column;
+}
+}
+
+.dropdown-content {
+display: none;
+max-height: 0;
+overflow: hidden;
+transition: max-height 0.3s ease-in-out;
+}
+
+.dropdown-content.show {
+display: block;
+max-height: 100vh; /* Adjust according to your content height */
+
+}
+
+
+
+.navbar button{
+background-color:transparent;
+border-style: none;
+}
+
+.navbar {
+display: flex;
+}
+
+.nav-btn {
+margin-right: 5px;
+font-weight:bold;
+}
+
+.content {
+display: none;
+}
+
+.content.active {
+display: block;
+}
+
+
+.dropdown-btn{
+background-color:#F7F9FA;
+border-style:solid;
+border-width:1px;
+border-color:#e2edef;
+font-weight:bold;
+}
+
+
+.hovering:hover{
+background-color:#D1D7DC;
+width:100%;
+transition:0.3s
+}
+
+.nav-btn:hover{
+color:#512467;
+transition:0.3s;
+text-decoration:underline;
+
+
+}
+
+span{
+font-weight:100;
+font-size:15px;
+}
+
+
+   .popover {
+  position: relative;
+}
+
+.popover-content {
+  display: none;
+  position: absolute;
+  background-color: #f9f9f9;
+  min-width: 160px;
+  box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
+  padding: 12px 16px;
+  z-index: 1;
+}
+
+.popover-content ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+.popover-content ul li {
+  cursor: pointer;
+}
+
+.popover-content ul li:hover {
+  background-color: #ddd;
+}
+
+.popover-btn {
+  border: none;
+  cursor: pointer;
+
+}
+
+
+    .topic-header {
+      background-color: #007bff;
+      color: #fff;
+      padding: 20px;
+      text-align: center;
+    }
+    .comment {
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      margin-bottom: 10px;
+      padding: 15px;
+      background-color: #fff;
+    }
+    .comment .user {
+      font-weight: bold;
+    }
+    .comment .timestamp {
+      font-size: 12px;
+      color: #666;
+    }
