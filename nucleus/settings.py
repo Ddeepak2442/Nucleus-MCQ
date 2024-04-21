@@ -48,6 +48,7 @@ THIRD_PARTY_APPS = [
 OUR_APPS = [
     'Accounts',
     'MCQS',
+    'performance',
 ]
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + OUR_APPS
 MIDDLEWARE = [

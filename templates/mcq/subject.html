@@ -66,7 +66,7 @@
         
 
         <div class="main p-3 ">
-          <div>
+          <!-- <div>
             <a href="{% url 'home_new' %}">
               <button class="bg-transparent" 
             style="border-width: 1px;
@@ -75,9 +75,9 @@
              Home
             </button>
           </a>
-          </div>
+          </div> -->
                 <div class="d-flex justify-content-center mb-4 adjustSmallscreen" style="align-items: center;">
-            <h1>Subjects</h1>
+            <h1>SUBJECTS</h1>
             
             </div>
                 <div class="container">
@@ -90,7 +90,7 @@
                             <div class="d-flex">
                               <img src="{{ subject.subject_image.url }}" alt="{{ subject.name }}" style="width:50px; height:50px;" class="m-3 mt-0"/>
                             <p> <strong > {{subject.subject_name}}</strong><br/>
-                              0/8 | Topics </p>
+                              0/8 Completed | Topics </p>
                             </div>
                               <div class="mt-3">
                                 <i class="bi bi-chevron-right" style="color:grey;"></i>
@@ -100,9 +100,6 @@
                         </div>
                       </div>
                       {% endfor %}
-                      
-                        
-                      
                       
                     </div>
                 </div>

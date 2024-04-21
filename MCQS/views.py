@@ -6,6 +6,7 @@ from django.utils.decorators import method_decorator
 from django.views.generic import ListView,TemplateView,View
 from django.contrib.auth.mixins import LoginRequiredMixin
 from . models import Subject,Topic,Question
+from performance.models import user_performance
 from django.db.models import Count
 
 from django.http import HttpRequest
@@ -54,7 +55,9 @@ class TopicListView(ListView):
 
 class MCQQuizView(LoginRequiredMixin, View):
     template_name = 'mcq/mcq.html'
-    def get(self, request, topic_slug, question_num):
+
+    def get_context(self, request, topic_slug, question_num):
+        feedback_color=None
         # Retrieve the Topic object
         topic = get_object_or_404(Topic, slug=topic_slug)
         print("Debugging - Retrieved topic:", topic)
@@ -83,11 +86,14 @@ class MCQQuizView(LoginRequiredMixin, View):
             'opt_values': opt_values,
             'question_num': question_num,
             'total_questions': len(questions),
+            'feedback_color': feedback_color,
         }
 
-        # Render template with context
+        return context
+
+    def get(self, request, topic_slug, question_num):
+        context = self.get_context(request, topic_slug, question_num)
         return render(request, self.template_name, context)
-    
     def correct_answer(self,question_id):
         question = get_object_or_404(Question,id=question_id)
         opt_values = question.opt_values.split(';')
@@ -95,16 +101,60 @@ class MCQQuizView(LoginRequiredMixin, View):
         dic = dict(zip(correct_options,opt_values))    
         correcr_ans = dic['1']
         return correcr_ans
+    def bookmark_question(self, request, question_id, category):
+        # Ensure the user is authenticated
+        if not request.user.is_authenticated:
+            return HttpResponse('Unauthorized', status=401)
 
-    def post(self, request, topic_slug, question_num):
-        if request.method == 'POST':
-            selected_option = request.POST.get('selected_option')
-            question_id = request.POST.get('question_id')
-            correct_ans = self.correct_answer(question_id)
-            if selected_option == correct_ans:
-                print("correct answer")
-            else:
-                print("wrong answer")
-            
+        # Retrieve or create the user_performance record
+        user_history, created = user_performance.objects.get_or_create(
             user=request.user,
-        pass
+            defaults={'attempted_ques': '', 'answered_correct': '', 'important_ques': '', 'star_ques': '', 'doubt_ques': ''}
+            )
+
+        # Add the question ID to the appropriate category
+        if category == 'important_ques':
+            user_history.important_ques += question_id + ';'
+        elif category == 'star_ques':
+            user_history.star_ques += question_id + ';'
+        elif category == 'doubt_ques':
+            user_history.doubt_ques += question_id + ';'
+        else:
+            return HttpResponse('Invalid category', status=400)
+
+        user_history.save()
+        return HttpResponse('Bookmark added successfully', status=200)
+    
+    def post(self, request, topic_slug, question_num):
+        bookmark_category = request.POST.get('bookmark_category', None)
+        if bookmark_category:
+            # Handle bookmark request
+            question_id = request.POST.get('question_id')
+            # Call the bookmark_question method to handle the bookmarking
+            return self.bookmark_question(request, question_id, bookmark_category)
+
+        selected_option = request.POST.get('selected_option')
+        question_id = request.POST.get('question_id')
+        correct_ans = self.correct_answer(question_id)
+        feedback_color = 'green' if selected_option == correct_ans else 'red'
+
+        # Update user history
+        current_user = request.user
+        print(current_user)
+        try:
+            user_history = user_performance.objects.get(user=current_user)
+        except user_performance.DoesNotExist:
+            user_history = user_performance.objects.create(user=current_user, attempted_ques='', answered_correct='')
+        user_history.attempted_ques += question_id + ';'
+        if selected_option == correct_ans:
+            user_history.answered_correct += question_id + ';'
+            print("correct answer", question_id)
+        else:
+            print("wrong answer")
+
+        user_history.save()
+
+        context = self.get_context(request, topic_slug, question_num)
+        context['correct_ans'] = correct_ans
+        context['feedback_color'] = feedback_color
+        return render(request, self.template_name, context)

@@ -78,7 +78,7 @@
               </button>
               
             </div>
-            <form method="post" action="{% url 'mcq_quiz' topic_slug=topic.slug question_num=1 %}">
+            <form method="post" action="{% url 'mcq_quiz' topic_slug=topic.slug question_num=question_num %}">
               {% csrf_token %}
             <p class="pt-3" >{{ current_question }} </p>
             <div class="card mt-4">
@@ -89,24 +89,62 @@
                 {% endfor %}
               </li>
             </div>
-            <div class="d-flex justify-content-between">
-              <input type="submit" value="Submit" class="btn btn-primary">
-              <input type="hidden" name="question_id" value="{{ current_question.id }}">
-            </form>
             
+              <input type="hidden" name="question_id" value="{{ current_question.id }}">
 
+            <div class="d-flex justify-content-between">
+              <input type="submit" value="Submit" class="btn btn-primary mt-4">
               <div class="popover mt-4">
                 <button class="popover-btn btn "><i class="bi bi-bookmark"></i> Bookmark</button>
                 <div class="popover-content">
                   <ul>
-                    <li data-value="go">Important</li>
-                    <li data-value="went">Star</li>
-                    <li data-value="gone">Doubt</li>
+                    <li onclick="bookmarkQuestion('important_ques')">Important</li>
+                    <li onclick="bookmarkQuestion('star_ques')">Star</li>
+                    <li onclick="bookmarkQuestion('doubt_ques')">Doubt</li>
                   </ul>
                 </div>
               </div>
             </div>
+          </form>
+          {% if feedback_color == 'green' %}
+          <div class="accordion mt-4" id="accordionPanelsStayOpenExample">
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="panelsStayOpen-headingOne">
+                    <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#panelsStayOpen-collapseOne" aria-expanded="true"
+                            aria-controls="panelsStayOpen-collapseOne">
+                        Explanation
+                    </button>
+                </h2>
+                <div id="panelsStayOpen-collapseOne" class="accordion-collapse collapse show" style="background-color: azure;"
+                     aria-labelledby="panelsStayOpen-headingOne">
+                    <div class="accordion-body">
+                        <strong>This is the Correct Answer.</strong> {{ current_question.explanation }}
+                    </div>
+                </div>
+            </div>
+        </div>
 
+      {% elif feedback_color == 'red' %}
+          <div class="accordion mt-4" id="accordionPanelsStayOpenExample">
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="panelsStayOpen-headingOne">
+                    <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#panelsStayOpen-collapseOne" aria-expanded="true"
+                            aria-controls="panelsStayOpen-collapseOne">
+                        Explanation
+                    </button>
+                </h2>
+                <div id="panelsStayOpen-collapseOne" class="accordion-collapse collapse show" style="background-color: azure;"
+                     aria-labelledby="panelsStayOpen-headingOne">
+                    <div class="accordion-body">
+                        <strong>Incorrect! <br> Correct answer:{{ correct_ans }}. </strong> <br> Explanation: {{ current_question.explanation }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+      {% endif %}
             
           </div>
         </div>
@@ -117,17 +155,14 @@
         <div class="row d-flex justify-content-center">
           <div class=" col-12 col-md-9 card mt-5 mb-5">
           <div class="navbar d-flex justify-content-around">
-            <button class="nav-btn" data-target="notes">Notes</button>
-            <button class="nav-btn" data-target="overview">Overview</button> 
+            <button class="nav-btn" data-target="overview">Overview</button>
+            <button class="nav-btn" data-target="notes">Notes</button> 
             <button class="nav-btn" data-target="Discussions">Discussions</button>
             <button class="nav-btn" data-target="Resources">Resources</button>
             <button class="nav-btn" data-target="learning-tools">Learning Tools</button>
             </div>
           <hr style="margin-top:0px;"/>
 
-          <div id="notes" class="content text-center p-5">
-            <h2>This Is Notes</h2>
-          </div>
 
           
             <div id="overview" class="content  p-5">
@@ -135,7 +170,7 @@
                 <div class="accordion-item">
                   <h2 class="accordion-header" id="flush-headingOne">
                     <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseOne" aria-expanded="false" aria-controls="flush-collapseOne">
-                      Topic  : Vasculitis
+                      Topic  : {{ topic.topic_name}}
                     </button>
                   </h2>
                   <div id="flush-collapseOne" class="accordion-collapse collapse" aria-labelledby="flush-headingOne" data-bs-parent="#accordionFlushExample">
@@ -145,6 +180,7 @@
                           <div class="col-12">
                           <div>
                             <div class="text-dark p-2">
+                              <!-- {% for sub_topic in sub_topics %} -->
                                 <div class="hovering">
                                 <div class="d-flex">
                                     <label for="Kawasaki’s" class="p-2">1. Kawasaki’s – Clinical Features  <label/>
@@ -157,13 +193,16 @@
                                 <label for="Cryoglobulinemia" class="p-2">2. Cryoglobulinemia</label>
                             </div>
                            <p class="p-3 pt-0 pb-0"><i class="bi bi-clipboard2-check"></i> 7 MCQS</p>
-                        </div>
+                                </div>
+
                         <div class="hovering">
                            <div class="d-flex">
                             <label for="Takayasu" class="p-2">3 .MC vessel involved in Takayasu</label>
                         </div>
                        <p class="p-3 pt-0 pb-0"><i class="bi bi-clipboard2-check"></i> 8 MCQS</p>
-                    </div>
+                        </div>
+
+                        <!-- {% endfor %} -->
                               </div>
                             </div>
               
@@ -175,7 +214,10 @@
                 </div>
               </div>
             </div>
-          
+
+            <div id="notes" class="content text-center p-5">
+              <h2>This Is Notes</h2>
+            </div>          
             
           
             <div id="Discussions" class="content text-center p-5">
@@ -264,7 +306,7 @@
 });
 
 document.addEventListener('DOMContentLoaded', function() {
-  document.getElementById('notes').classList.add('active');
+  document.getElementById('overview').classList.add('active');
 
   document.querySelectorAll('.nav-btn').forEach(button => {
     button.addEventListener('click', function() {
@@ -307,6 +349,36 @@ document.querySelectorAll('.nav-btn').forEach(button => {
 });
 
 </script>
+
+<script>
+  function bookmarkQuestion(category) {
+    const questionId = document.querySelector('input[name="question_id"]').value;
+    
+    // Assuming you're using Django's CSRF token setup
+    const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+    
+    fetch("{% url 'mcq_quiz' topic_slug=topic.slug question_num=question_num %}", {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': csrfToken,
+      },
+      body: JSON.stringify({
+        question_id: questionId,
+        bookmark_category: category,
+      })
+    })
+    .then(response => {
+      if (response.ok) {
+        console.log('Bookmark added successfully');
+        // Optionally, update the UI to reflect the bookmark
+      } else {
+        console.error('Error adding bookmark');
+      }
+    })
+    .catch(error => console.error('Error:', error));
+  }
+  </script>
 
 </body>
 </html>
