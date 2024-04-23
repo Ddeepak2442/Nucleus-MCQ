@@ -5,7 +5,7 @@ from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.views.generic import ListView,TemplateView,View
 from django.contrib.auth.mixins import LoginRequiredMixin
-from . models import Subject,Topic,Question
+from . models import Subject,Topic,Question,SubTopic
 from performance.models import user_performance
 from django.db.models import Count
 
@@ -61,6 +61,9 @@ class MCQQuizView(LoginRequiredMixin, View):
         # Retrieve the Topic object
         topic = get_object_or_404(Topic, slug=topic_slug)
         print("Debugging - Retrieved topic:", topic)
+        print("Debugging - Retrieved topic:", topic.topic_name)
+
+        sub_topic =SubTopic.objects.filter(topic_name=topic)
 
         # Retrieve questions for the topic
         questions = Question.objects.filter(sub_topic_name__topic_name=topic)
@@ -82,6 +85,7 @@ class MCQQuizView(LoginRequiredMixin, View):
         # Prepare context
         context = {
             'topic': topic,
+            'sub_topics':sub_topic,
             'current_question': current_question,
             'opt_values': opt_values,
             'question_num': question_num,

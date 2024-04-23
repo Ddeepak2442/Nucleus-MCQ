@@ -180,29 +180,17 @@
                           <div class="col-12">
                           <div>
                             <div class="text-dark p-2">
-                              <!-- {% for sub_topic in sub_topics %} -->
+                              {% for sub_topic in sub_topics %}
                                 <div class="hovering">
                                 <div class="d-flex">
-                                    <label for="Kawasaki’s" class="p-2">1. Kawasaki’s – Clinical Features  <label/>
+                                    <label for="Kawasaki’s" class="p-2">{{ sub_topic.sub_topic_name }}  <label/>
                                     
                                 </div>
                                 <p class="p-3 pt-0 pb-0"><i class="bi bi-clipboard2-check"></i> 5 MCQS</p>
                                </div>
-                               <div class="hovering">
-                               <div class="d-flex">
-                                <label for="Cryoglobulinemia" class="p-2">2. Cryoglobulinemia</label>
-                            </div>
-                           <p class="p-3 pt-0 pb-0"><i class="bi bi-clipboard2-check"></i> 7 MCQS</p>
-                                </div>
+                               
 
-                        <div class="hovering">
-                           <div class="d-flex">
-                            <label for="Takayasu" class="p-2">3 .MC vessel involved in Takayasu</label>
-                        </div>
-                       <p class="p-3 pt-0 pb-0"><i class="bi bi-clipboard2-check"></i> 8 MCQS</p>
-                        </div>
-
-                        <!-- {% endfor %} -->
+                        {% endfor %}
                               </div>
                             </div>
               
