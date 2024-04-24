@@ -139,11 +139,24 @@
                           <div>
                             <div class="text-dark p-2">
                               {% for sub_topic in sub_topics %}
+<<<<<<< HEAD
                               <div class="hovering">
                                   <div class="d-flex">
                                       <label for="{{ sub_topic.sub_topic_name }}" class="p-2">{{ sub_topic.sub_topic_name }}</label>
                                   </div>
                                   <p class="p-3 pt-0 pb-0"><i class="bi bi-clipboard2-check"></i> {{ sub_topic.question_count }} MCQS</p>
+=======
+                                <div class="hovering">
+                                <div class="d-flex">
+                                    <label for="Kawasaki’s" class="p-2">{{ sub_topic.sub_topic_name }}  <label/>
+                                    
+                                </div>
+                                <p class="p-3 pt-0 pb-0"><i class="bi bi-clipboard2-check"></i> 5 MCQS</p>
+                               </div>
+                               
+
+                        {% endfor %}
+>>>>>>> 0087f373a5e292cc3f569293156fa4a7d0aebd16
                               </div>
                               {% endfor %}
                           </div>

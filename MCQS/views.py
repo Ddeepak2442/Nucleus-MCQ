@@ -64,6 +64,7 @@ class MCQQuizView(LoginRequiredMixin, View):
         # Retrieve the Topic object
         topic = get_object_or_404(Topic, slug=topic_slug)
         print("Debugging - Retrieved topic:", topic)
+<<<<<<< HEAD
         # Retrieve subtopics related to the topic
         sub_topics = SubTopic.objects.filter(topic_name=topic)
         print("Debugging - Retrieved subtopics:", sub_topics)
@@ -72,6 +73,11 @@ class MCQQuizView(LoginRequiredMixin, View):
           question_count = Question.objects.filter(sub_topic_name=sub_topic).count()
           sub_topic.question_count = question_count
           print(f"Subtopic '{sub_topic.sub_topic_name}' has {question_count} questions")
+=======
+        print("Debugging - Retrieved topic:", topic.topic_name)
+
+        sub_topic =SubTopic.objects.filter(topic_name=topic)
+>>>>>>> 0087f373a5e292cc3f569293156fa4a7d0aebd16
 
         # Retrieve questions for the topic
         questions = Question.objects.filter(sub_topic_name__topic_name=topic)
@@ -93,7 +99,11 @@ class MCQQuizView(LoginRequiredMixin, View):
         # Prepare context
         context = {
             'topic': topic,
+<<<<<<< HEAD
             'sub_topics': sub_topics,
+=======
+            'sub_topics':sub_topic,
+>>>>>>> 0087f373a5e292cc3f569293156fa4a7d0aebd16
             'current_question': current_question,
             
             'opt_values': opt_values,
