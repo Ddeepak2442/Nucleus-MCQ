@@ -1,14 +1,15 @@
 from django.shortcuts import redirect, render, get_object_or_404
 from django.http import HttpResponse
 from django.views import View
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.views.generic import ListView,TemplateView,View
 from django.contrib.auth.mixins import LoginRequiredMixin
-from . models import Subject,Topic,Question
+from . models import Subject,Topic,Question,SubTopic
 from performance.models import user_performance
 from django.db.models import Count
-
+from performance.forms import BookmarkForm 
 from django.http import HttpRequest
 
 class HomeView(TemplateView):
@@ -20,7 +21,7 @@ class SubjectView(ListView):
     @method_decorator(login_required)
     def get(self, request):
        if request.method == 'GET':
-            subjects = Subject.objects.all()  # Retrieve all subjects from the database
+            subjects = Subject.objects.annotate(num_topics=Count('topic')) # Retrieve all subjects from the database
             return render(request, self.template_name, {'subjects': subjects})
 
 class TopicListView(ListView):
@@ -46,11 +47,13 @@ class TopicListView(ListView):
             return queryset
         
     def get_context_data(self, **kwargs):
+        print("Inside get_context_data method")  # Add this line for debugging
+    
         context = super().get_context_data(**kwargs)
         subject_slug = self.kwargs.get('subject_slug')
         if subject_slug:
-            subject = get_object_or_404(Subject, slug=subject_slug)
-            context['subject'] = subject
+          subject = get_object_or_404(Subject, slug=subject_slug)
+          context['subject'] = subject
         return context
 
 class MCQQuizView(LoginRequiredMixin, View):
@@ -61,6 +64,14 @@ class MCQQuizView(LoginRequiredMixin, View):
         # Retrieve the Topic object
         topic = get_object_or_404(Topic, slug=topic_slug)
         print("Debugging - Retrieved topic:", topic)
+        # Retrieve subtopics related to the topic
+        sub_topics = SubTopic.objects.filter(topic_name=topic)
+        print("Debugging - Retrieved subtopics:", sub_topics)
+        # Number of QUESTIONS PRESENT IN SUBTOPIC
+        for sub_topic in sub_topics:
+          question_count = Question.objects.filter(sub_topic_name=sub_topic).count()
+          sub_topic.question_count = question_count
+          print(f"Subtopic '{sub_topic.sub_topic_name}' has {question_count} questions")
 
         # Retrieve questions for the topic
         questions = Question.objects.filter(sub_topic_name__topic_name=topic)
@@ -82,7 +93,9 @@ class MCQQuizView(LoginRequiredMixin, View):
         # Prepare context
         context = {
             'topic': topic,
+            'sub_topics': sub_topics,
             'current_question': current_question,
+            
             'opt_values': opt_values,
             'question_num': question_num,
             'total_questions': len(questions),
@@ -120,32 +133,30 @@ class MCQQuizView(LoginRequiredMixin, View):
         elif category == 'doubt_ques':
             user_history.doubt_ques += question_id + ';'
         else:
+            print("Invalid bookmark category")
             return HttpResponse('Invalid category', status=400)
 
         user_history.save()
         return HttpResponse('Bookmark added successfully', status=200)
     
-    def post(self, request, topic_slug, question_num):
-        bookmark_category = request.POST.get('bookmark_category', None)
-        if bookmark_category:
-            # Handle bookmark request
-            question_id = request.POST.get('question_id')
-            # Call the bookmark_question method to handle the bookmarking
-            return self.bookmark_question(request, question_id, bookmark_category)
 
+
+    def post(self, request, topic_slug, question_num):
+        print("POST request received")
+    
         selected_option = request.POST.get('selected_option')
         question_id = request.POST.get('question_id')
         correct_ans = self.correct_answer(question_id)
         feedback_color = 'green' if selected_option == correct_ans else 'red'
 
-        # Update user history
+       # Update user history
         current_user = request.user
         print(current_user)
         try:
             user_history = user_performance.objects.get(user=current_user)
         except user_performance.DoesNotExist:
             user_history = user_performance.objects.create(user=current_user, attempted_ques='', answered_correct='')
-        user_history.attempted_ques += question_id + ';'
+            user_history.attempted_ques += question_id + ';'
         if selected_option == correct_ans:
             user_history.answered_correct += question_id + ';'
             print("correct answer", question_id)
@@ -157,4 +168,6 @@ class MCQQuizView(LoginRequiredMixin, View):
         context = self.get_context(request, topic_slug, question_num)
         context['correct_ans'] = correct_ans
         context['feedback_color'] = feedback_color
+        # Ensure the bookmark form is always included in the context, even if not submitted
+        context['bookmark_form'] = BookmarkForm()
         return render(request, self.template_name, context)
