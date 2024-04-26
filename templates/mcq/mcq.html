@@ -1,39 +1,55 @@
 {% extends 'basemain.html' %} {% load static %} {% block content %}
     <div class="main">
+      <div class="">
+        <a href="{% url 'subject_list'%}">
+          <button class="hovered p-2 mb-0 m-3" 
+        style="border-width: 0px;
+        border-radius: 5px;">
+         <i class="bi bi-arrow-left"></i>
+        </button>
+      </a>
+      </a>
+        </div>
       <div class="container">
         <div class="row d-flex justify-content-center">
-          <div class="col-12 col-md-10">
-            <div class="d-flex justify-content-between shadow mt-3">
-              <button class="hovered p-2 mb-0 m-3" onclick="location.href='{% url 'mcq_quiz' topic_slug=topic.slug question_num=question_num|add:'-1' %}'">
-                <i class="bi bi-arrow-left-circle-fill" style="color:#0d6efd; width:26px; height:26px; font-weight:600;"></i>
+          <div class="col-12 col-md-9 col-lg-10">
+            <div class="d-flex justify-content-between shadow mt-3 p-2 pb-1" style="align-items: center;">
+              
+              <button class="mt-1 mb-2 hovered btn p-2 text-center" onclick="location.href='{% url 'mcq_quiz' topic_slug=topic.slug question_num=question_num|add:'-1' %}'" style= "width:100px; border-color: rgb(227, 227, 227);">
+                Prev
               </button>
-              <p class="pt-3">Question  {{ question_num }} of {{ total_questions }}</p>
-              <button class="hovered p-2 mb-0 m-3" onclick="location.href='{% url 'mcq_quiz' topic_slug=topic.slug question_num=question_num|add:'1' %}'">
-                <i class="bi bi-arrow-right-circle-fill" style="color:#0d6efd; width:26px; height:26px; font-weight:600;"></i>
+              <p class="pt-1">Question  {{ question_num }} of {{ total_questions }}</p>
+              <button class="mt-1 mb-2 hovered btn p-2 text-center" onclick="location.href='{% url 'mcq_quiz' topic_slug=topic.slug question_num=question_num|add:'1' %}'" style= "width:100px; border-color: rgb(227, 227, 227);">
+                Next
               </button>
               
             </div>
             <form method="post" action="{% url 'mcq_quiz' topic_slug=topic.slug question_num=question_num %}">
               {% csrf_token %}
                 <p class="pt-3" >{{ current_question }} </p>
-                <div class="card mt-4">
-                {% if feedback_color %}
-                <div class="options mt-4">
-                  <table class="table">
-                     <tbody>
-                        {% for option in opt_values %}
-                         <tr>
-                            <td><p> {{ option }} </p></td>
-                         </tr>
-                       {% endfor %}
-                     </tbody>
-                  </table>
+                 {% if feedback_color %}
+                 <div class="options mt-4">
+                   <table class="table">
+                    <tbody>
+                    
+                    {% for option in opt_values %}
+                     <tr  class="{% if option == correct_ans %}green{% elif option == selected_option and selected_option != correct_ans %}red{% endif %}" >
+                        
+                          <td >
+                              <p> {{ option }} </p>
+                           </td>
+                          
+                      </tr>
+                      {% endfor %}
+                  </tbody>  
+                  </table> 
+                
                 </div>
               {% else %}
-              <div>
+              <div class="card mt-4 p-2">
                 {% for option in opt_values %}
-                <input type="radio" id="option{{ forloop.counter }}" class="m-3 mt-0 mb-0" name="selected_option" value="{{ option }}" required>
-                <label for="option{{ forloop.counter }}">{{ option }}</label><br>
+                <li><input type="radio" id="option{{ forloop.counter }}" class="m-3 mt-0 mb-0" name="selected_option" value="{{ option }}" required>
+                <label class="mt-1 mb-1" for="option{{ forloop.counter }}">{{ option }}</label><br></li>
                 {% endfor %}
               </div>
              {% endif %}
@@ -41,9 +57,9 @@
 
              <div class="d-flex justify-content-between">
               <input  type="submit" value="Submit" class="btn btn-primary mt-4">
-          </form>
+          <!--</form>-->
               <div class="popover mt-4">
-                <button class="popover-btn btn  hovered" onclick="togglePopover()"><i class="bi bi-bookmark"></i> Bookmark</button>
+                <button class="popover-btn btn hovered" onclick="togglePopover()"><i class="bi bi-bookmark"></i> Bookmark</button>
                 <div id="popoverContent" class="popover-content" style="display: none;">
                     <!-- Popover content -->
                     <form id="bookmarkForm" method="post" action="{% url 'mcq_quiz' topic_slug=topic.slug question_num=question_num %}">
@@ -51,9 +67,9 @@
                         <input type="hidden" name="question_id" value="{{ current_question.id }}">
                         <input type="hidden" name="bookmark_category" id="bookmark_category" value="">
                         <ul>
-                            <li><button type="submit" name="bookmark_category" value="important">Important</button></li>
-                            <li><button type="submit" name="bookmark_category" value="star">Star</button></li>
-                            <li><button type="submit" name="bookmark_category" value="doubt">Doubt</button></li>
+                            <li><data-value="Important" name="bookmark_category" value="important">Important</li>
+                            <li><data-value="Star" name="bookmark_category" value="star">Star</li>
+                            <li><data-value="Doubt" name="bookmark_category" value="doubt">Doubt</li>
                         </ul>
                     </form>
                 </div>
@@ -62,7 +78,7 @@
             
             </div>
             
-            </div>
+            
           
           {% if feedback_color == 'green' %}
           <div class="accordion mt-4" id="accordionPanelsStayOpenExample">
@@ -111,15 +127,32 @@
 
       <div class="conatiner">
         <div class="row d-flex justify-content-center">
-          <div class=" col-12 col-md-9 card mt-5 mb-5">
-          <div class="navbar d-flex justify-content-around">
-            <button class="nav-btn" data-target="overview">Overview</button>
-            <button class="nav-btn" data-target="notes">Notes</button> 
-            <button class="nav-btn" data-target="Discussions">Discussions</button>
-            <button class="nav-btn" data-target="Resources">Resources</button>
-            <button class="nav-btn" data-target="learning-tools">Learning Tools</button>
+          <div class=" col-12 col-md-8 col-lg-9  mt-5 mb-5">
+            <div class="card">
+            <div class="card-header">
+              <ul class="nav nav-tabs card-header-tabs">
+                <li class="nav-item">
+                  <button class="bg-transparent" style="border-width: 0px; "><a class="nav-link  active text-black" data-target="notes" >Notes</a></button>
+                </li>
+                <li class="nav-item">
+                  <button class="bg-transparent" style="border-width: 0px;"><a class="nav-link text-black" data-target="overview" >Overview</a></button>
+                </li>
+                <li class="nav-item">
+                  <button class="bg-transparent" style="border-width: 0px;"><a class="nav-link text-black" data-target="Discussions" >Discussions</a></button>
+                </li>
+                <li class="nav-item">
+                  <button class="bg-transparent" style="border-width: 0px;"><a class="nav-link text-black" data-target="Resources" >Resources</a></button>
+                </li>
+                <li class="nav-item">
+                  <button class="bg-transparent" style="border-width: 0px;"><a class="nav-link text-black" data-target="learning-tools" >Learning Tools</a></button>
+                </li>
+              </ul>
             </div>
-          <hr style="margin-top:0px;"/>
+
+          <div id="notes" class="content p-5" style="overflow-y: scroll;">
+            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Repellendus suscipit placeat natus accusamus ullam dolore molestias perspiciatis. Sed consequatur fugiat odit neque id dolore, eius cupiditate magni voluptates ipsam doloribus tempore repudiandae perferendis accusantium, perspiciatis atque unde cum eos! Quos voluptates, nostrum placeat inventore, illo vel consequuntur corrupti quibusdam dolores eveniet asperiores eaque molestias ducimus aliquid dolorem fuga? Recusandae dolores magnam ullam, tenetur sed eum eius quas sint, veritatis alias a libero, nihil ut sunt eaque perspiciatis eveniet quasi iure nobis cumque facere iusto porro nam? Iure autem impedit possimus harum debitis. Similique omnis quaerat eveniet beatae hic possimus adipisci.</p>
+            <p>Medicine, a multifaceted discipline, encompasses the art and science of healing, maintaining health, and preventing diseases. Rooted in centuries of accumulated knowledge and propelled by contemporary advancements, medicine blends biology, chemistry, pharmacology, and technology to diagnose, treat, and cure ailments. From ancient herbal remedies to cutting-edge gene therapies, its evolution mirrors humanity's quest for understanding and conquering illness. Physicians, nurses, researchers, and healthcare professionals dedicate themselves to the pursuit of alleviating suffering and improving quality of life. In a world marked by diverse health challenges, medicine stands as a beacon of hope, continuously striving to enhance well-being and extend the boundaries of possibility.</p>
+          </div>
 
 
           
@@ -139,24 +172,11 @@
                           <div>
                             <div class="text-dark p-2">
                               {% for sub_topic in sub_topics %}
-<<<<<<< HEAD
                               <div class="hovering">
                                   <div class="d-flex">
                                       <label for="{{ sub_topic.sub_topic_name }}" class="p-2">{{ sub_topic.sub_topic_name }}</label>
                                   </div>
                                   <p class="p-3 pt-0 pb-0"><i class="bi bi-clipboard2-check"></i> {{ sub_topic.question_count }} MCQS</p>
-=======
-                                <div class="hovering">
-                                <div class="d-flex">
-                                    <label for="Kawasaki’s" class="p-2">{{ sub_topic.sub_topic_name }}  <label/>
-                                    
-                                </div>
-                                <p class="p-3 pt-0 pb-0"><i class="bi bi-clipboard2-check"></i> 5 MCQS</p>
-                               </div>
-                               
-
-                        {% endfor %}
->>>>>>> 0087f373a5e292cc3f569293156fa4a7d0aebd16
                               </div>
                               {% endfor %}
                           </div>
@@ -173,52 +193,64 @@
               </div>
             </div>
 
-            <div id="notes" class="content text-center p-5">
-              <h2>This Is Notes</h2>
-            </div>          
-            
-          
             <div id="Discussions" class="content text-center p-5">
               <div class="container mt-4">
-                <!-- Topic Header -->
+                
                 <div class="topic-header">
                   <h1>Medicine Discussions</h1>
                   <p>Join the conversation about the latest trends and developments in medicine!</p>
                 </div>
-                <!-- Comments Section -->
+                
                 <div class="comments-section">
-                  <!-- Comment 1 -->
+                  
                   <div class="comment">
                     <p class="user">John Doe</p>
                     <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin vehicula aliquam eros, eu vehicula lorem ultrices quis. Nullam vel nulla nec ante sodales mollis nec non neque.</p>
                     <p class="timestamp">Posted: April 17, 2024</p>
                   </div>
-                  <!-- Comment 2 -->
+                  
                   <div class="comment">
                     <p class="user">Jane Smith</p>
                     <p>Suspendisse potenti. Nunc lacinia hendrerit turpis, nec lobortis nunc finibus nec. Sed ac justo at nisi auctor accumsan.</p>
                     <p class="timestamp">Posted: April 16, 2024</p>
                   </div>
-                  <!-- Add your comment form -->
+                  
                   <form class="mt-4">
                     <div class="form-group">
                       <label for="comment">Join the discussion:</label>
                       <textarea class="form-control" id="comment" rows="3"></textarea>
                     </div>
-                    <button type="submit" class="btn btn-primary">Post Comment</button>
+                    <button type="submit" class="btn btn-primary mt-3">Post Comment</button>
                   </form>
                 </div>
               </div>
             </div>
           
             <div id="Resources" class="content text-center p-5">
-              <h2>This Is Resources</h2>
+              <div class="container">
+                <div class="row">
+                  <div class="col-12  mb-3 ">
+                    <div class="card shadow p-3  hovered">
+                          <div class=" text-center">  
+                        <h1 class="text-center">Textbook of surgery</h1>
+                         <p> <strong> The biological basis of modern surgical practice 21st Edition </strong></p>
+                       
+                        <div class="d-flex justify-content-between">
+                        <p><strong>Authors : </strong> TOWNSEND
+                          BEAUCHAMP, EVERS, MATTOX </p>
+                           <p><strong>Pages :</strong> 2197</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                    </div>
+                  </div>
             </div>
           
             <div id="learning-tools" class="content text-center p-5">
               <h2>This Is Learning Tools</h2>
-            </div>
-          
+            </div>   
+            
             
           </div>
         </div>
@@ -244,42 +276,36 @@
   </script>
     <script>
 
-
-    document.addEventListener("DOMContentLoaded", function() {
-  const dropdownBtns = document.querySelectorAll('.dropdown-btn');
-
-  dropdownBtns.forEach(function(btn) {
-    btn.addEventListener('click', function() {
-      const dropdownContent = this.nextElementSibling;
-      dropdownContent.classList.toggle('show');
-    });
-  });
-});
-
 document.addEventListener('DOMContentLoaded', function() {
-  document.getElementById('overview').classList.add('active');
+  document.getElementById('notes').classList.add('activ');
 
-  document.querySelectorAll('.nav-btn').forEach(button => {
+  document.querySelectorAll('.nav-link').forEach(button => {
     button.addEventListener('click', function() {
       const target = this.getAttribute('data-target');
       document.querySelectorAll('.content').forEach(content => {
-        content.classList.remove('active');
+        content.classList.remove('activ');
       });
-      document.getElementById(target).classList.add('active');
+      document.getElementById(target).classList.add('activ');
     });
   });
 });
 
-document.querySelectorAll('.nav-btn').forEach(button => {
+</script>
+
+
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    const buttons = document.querySelectorAll('.nav-link');
+
+    buttons.forEach(button => {
       button.addEventListener('click', function() {
-        const target = this.getAttribute('data-target');
-        document.querySelectorAll('.content').forEach(content => {
-          content.classList.remove('active');
+        buttons.forEach(btn => {
+          btn.classList.remove('active');
         });
-        document.getElementById(target).classList.add('active');
+        this.classList.add('active');
       });
     });
-
+  });
 </script>
 
 <script>
@@ -301,24 +327,5 @@ document.querySelectorAll('.nav-btn').forEach(button => {
 
 </script>
 
-<script>
-  document.addEventListener("DOMContentLoaded", function() {
-    // Your JavaScript code here
-    function togglePopover() {
-        var popoverContent = document.getElementById("popoverContent");
-        if (popoverContent.style.display === "none") {
-            popoverContent.style.display = "block";
-        } else {
-            popoverContent.style.display = "none";
-        }
-    }
-
-    function setCategory(category) {
-        document.getElementById("bookmark_category").value = category;
-        document.getElementById("bookmarkForm").submit();
-    }
-});
-
-</script>
       
 {% endblock %}

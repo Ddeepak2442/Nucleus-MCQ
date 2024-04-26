@@ -213,7 +213,7 @@ font-weight:bold;
 display: none;
 }
 
-.content.active {
+.content.activ {
 display: block;
 }
 
@@ -315,4 +315,13 @@ font-size:15px;
     .hovered:hover i {
       color:white;
     }
+    .green {
+      background-color: #80ff80;
+       /* Change to your preferred shade of green */
+  }
+  
+  .red {
+      background-color: #ff8080; /* Change to your preferred shade of red */
+  }
+  
     

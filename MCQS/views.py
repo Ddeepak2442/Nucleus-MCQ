@@ -1,5 +1,6 @@
 from django.shortcuts import redirect, render, get_object_or_404
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
+from django.urls import reverse
 from django.views import View
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -13,7 +14,7 @@ from performance.forms import BookmarkForm
 from django.http import HttpRequest
 
 class HomeView(TemplateView):
-    template_name = 'home.html'
+    template_name = 'homenew.html'
 
 class SubjectView(ListView):
     model = Subject
@@ -64,7 +65,6 @@ class MCQQuizView(LoginRequiredMixin, View):
         # Retrieve the Topic object
         topic = get_object_or_404(Topic, slug=topic_slug)
         print("Debugging - Retrieved topic:", topic)
-<<<<<<< HEAD
         # Retrieve subtopics related to the topic
         sub_topics = SubTopic.objects.filter(topic_name=topic)
         print("Debugging - Retrieved subtopics:", sub_topics)
@@ -73,11 +73,6 @@ class MCQQuizView(LoginRequiredMixin, View):
           question_count = Question.objects.filter(sub_topic_name=sub_topic).count()
           sub_topic.question_count = question_count
           print(f"Subtopic '{sub_topic.sub_topic_name}' has {question_count} questions")
-=======
-        print("Debugging - Retrieved topic:", topic.topic_name)
-
-        sub_topic =SubTopic.objects.filter(topic_name=topic)
->>>>>>> 0087f373a5e292cc3f569293156fa4a7d0aebd16
 
         # Retrieve questions for the topic
         questions = Question.objects.filter(sub_topic_name__topic_name=topic)
@@ -95,18 +90,16 @@ class MCQQuizView(LoginRequiredMixin, View):
         # Extract options
         opt_values = current_question.opt_values.split(';') if current_question.opt_values else []
         print("Debugging - Retrieved options:", opt_values)
+        correct_options_list = current_question.correct_options.split(';')
 
         # Prepare context
         context = {
             'topic': topic,
-<<<<<<< HEAD
             'sub_topics': sub_topics,
-=======
-            'sub_topics':sub_topic,
->>>>>>> 0087f373a5e292cc3f569293156fa4a7d0aebd16
             'current_question': current_question,
             
             'opt_values': opt_values,
+            'correct_options_list': correct_options_list,
             'question_num': question_num,
             'total_questions': len(questions),
             'feedback_color': feedback_color,
@@ -124,6 +117,7 @@ class MCQQuizView(LoginRequiredMixin, View):
         dic = dict(zip(correct_options,opt_values))    
         correcr_ans = dic['1']
         return correcr_ans
+        
     def bookmark_question(self, request, question_id, category):
         # Ensure the user is authenticated
         if not request.user.is_authenticated:
@@ -174,10 +168,15 @@ class MCQQuizView(LoginRequiredMixin, View):
             print("wrong answer")
 
         user_history.save()
+        
 
         context = self.get_context(request, topic_slug, question_num)
         context['correct_ans'] = correct_ans
         context['feedback_color'] = feedback_color
         # Ensure the bookmark form is always included in the context, even if not submitted
         context['bookmark_form'] = BookmarkForm()
+        context['selected_option'] = selected_option
+        context['question_id'] = question_id
+
         return render(request, self.template_name, context)
+        

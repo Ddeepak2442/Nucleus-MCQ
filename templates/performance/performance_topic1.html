@@ -1,0 +1,36 @@
+{% extends 'basemain.html' %}
+{% load static %}
+
+{% block content %}
+<div class="main p-3">
+    <div class="d-flex justify-content-center mb-4 mt-4 adjustSmallscreen" style="align-items: center;">
+        <h1>TOPICS</h1>
+    </div>
+    <div class="container">
+        <div class="row">
+            {% for topic, performance in topic_performance_data.items %}
+            <div class="col-12 col-md-6 mb-3">
+                <div class="card shadow hovered">
+                    <a href="#" style="color:black;">
+                        <div class="d-flex p-3" style="align-items: center;">
+                            <div class="w-100 p-2 pt-0">
+                                <p>
+                                    <strong>{{ topic }}</strong>
+                                </p>
+                                <div class="progress mt-0">
+                                    <div class="progress-bar progress-bar-striped progress-bar-animated bg-primary" role="progressbar" style="width: {{ performance.percentage }}%;" aria-valuenow="{{ performance.percentage }}" aria-valuemin="0" aria-valuemax="100">
+                                    </div>
+                                </div>
+                            </div>
+                            <p style="padding-top: 50px; padding-right:10px">
+                                {{ performance.percentage }}%
+                            </p>
+                        </div>
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}
