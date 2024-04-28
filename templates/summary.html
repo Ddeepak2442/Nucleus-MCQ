@@ -1,0 +1,26 @@
+{% extends 'basemain.html' %}
+
+{% block content %}
+<div class="main p-3">
+
+    {{ performance_data}}
+<h3>Summary Generator</h3>
+
+<form method="post" autocomplete="off">
+    {% csrf_token %}
+    <input type="text" class="form-control" name="user_input">
+    <button type="submit" class="btn btn-primary mt-3">
+        Submit
+    </button>
+</form>
+<br>
+
+{% if result %}
+<div>
+    {{ result }}
+    <br>
+</div>
+{% endif %}
+</div>
+
+{% endblock content %}

@@ -24,6 +24,7 @@ from . import views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('',views.index,name='index'),
+    path('summary/',views.GenerateSummaryView.as_view(),name='generate_summary'),
     path('', include('MCQS.urls')),
     path('',include('performance.urls')),
     path('accounts/', include('Accounts.urls')),
