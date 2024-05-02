@@ -1,5 +1,5 @@
 from django.shortcuts import redirect, render, get_object_or_404
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse
 from django.views import View
 from django.contrib import messages
@@ -12,6 +12,8 @@ from performance.models import user_performance
 from django.db.models import Count
 from performance.forms import BookmarkForm 
 from django.http import HttpRequest
+from django.http import HttpResponseNotAllowed
+
 
 class HomeView(TemplateView):
     template_name = 'homenew.html'
@@ -97,7 +99,6 @@ class MCQQuizView(LoginRequiredMixin, View):
             'topic': topic,
             'sub_topics': sub_topics,
             'current_question': current_question,
-            
             'opt_values': opt_values,
             'correct_options_list': correct_options_list,
             'question_num': question_num,
@@ -128,6 +129,28 @@ class MCQQuizView(LoginRequiredMixin, View):
             user=request.user,
             defaults={'attempted_ques': '', 'answered_correct': '', 'important_ques': '', 'star_ques': '', 'doubt_ques': ''}
             )
+        # Check if the question already exists in the specified category
+        if  'remove_bookmark' in request.POST and request.POST.get('remove_bookmark') == 'true':
+
+            if category == 'important_ques' and question_id in user_history.important_ques.split(';'):
+                user_history.important_ques = user_history.important_ques.replace(question_id + ';', '')
+            elif category == 'star_ques' and question_id in user_history.star_ques.split(';'):
+                user_history.star_ques = user_history.star_ques.replace(question_id + ';', '')
+            elif category == 'doubt_ques' and question_id in user_history.doubt_ques.split(';'):
+                user_history.doubt_ques = user_history.doubt_ques.replace(question_id + ';', '')
+
+            user_history.save()
+            return HttpResponse('Bookmark removed successfully', status=200)
+        # Check if the question already exists in the specified category
+        if category == 'important_ques' and question_id in user_history.important_ques.split(';'):
+            messages.error(request, 'Question already exists in important questions')
+            return HttpResponse('Question already exists in important questions', status=400)
+        elif category == 'star_ques' and question_id in user_history.star_ques.split(';'):
+            messages.error(request, 'Question already exists in starred questions')
+            return HttpResponse('Question already exists in starred questions', status=400)
+        elif category == 'doubt_ques' and question_id in user_history.doubt_ques.split(';'):
+            messages.error(request, 'Question already exists in doubtful questions')
+            return HttpResponse('Question already exists in doubtful questions', status=400)
 
         # Add the question ID to the appropriate category
         if category == 'important_ques':
@@ -168,7 +191,40 @@ class MCQQuizView(LoginRequiredMixin, View):
             print("wrong answer")
 
         user_history.save()
-        
+        # Handle bookmarking actions
+        bookmark_type = request.POST.get('bookmark_type')
+        remove_bookmark = request.POST.get('remove_bookmark') == 'true'
+
+        if bookmark_type:
+            # Call bookmark_question and capture the response
+            bookmark_response = self.bookmark_question(request, question_id, bookmark_type)
+            if bookmark_response.status_code != 200:
+             # If bookmarking failed, add error message
+                messages.error(request, bookmark_response.content.decode())
+            else:
+                # If bookmarking successful, add success message
+                messages.success(request, 'Bookmark added successfully')
+
+           # Handle bookmark removal
+        if 'remove_bookmark' in request.POST:
+            question_id = request.POST.get('question_id')
+            category = request.POST.get('category')
+            bookmark_response = self.bookmark_question(request, question_id, category)
+            if bookmark_response.status_code == 200:
+                # If removal is successful, redirect to a success page or return a success message
+                return HttpResponse('Question removed from bookmark category successfully', status=200)
+            else:
+                # If removal fails, handle the error
+                return HttpResponse('Failed to remove question from bookmark category', status=400)
+                # Handle bookmarking actions
+        bookmark_type = request.POST.get('bookmark_type')
+        if bookmark_type:
+            # Capture the response from bookmark_question and return it
+            response = self.bookmark_question(request, question_id, bookmark_type)
+            if response.status_code != 200:
+                # If response status code is not 200, return the response
+                return response
+
 
         context = self.get_context(request, topic_slug, question_num)
         context['correct_ans'] = correct_ans
@@ -177,6 +233,11 @@ class MCQQuizView(LoginRequiredMixin, View):
         context['bookmark_form'] = BookmarkForm()
         context['selected_option'] = selected_option
         context['question_id'] = question_id
-
+         # Get messages and add them to the context
+        context['messages'] = messages.get_messages(request)
+        context['bookmark_remove'] = request.POST.get('remove_bookmark') == 'true'
         return render(request, self.template_name, context)
-        
+
+
+
+

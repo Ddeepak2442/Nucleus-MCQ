@@ -25,61 +25,51 @@
               
             </div>
             <form method="post" action="{% url 'mcq_quiz' topic_slug=topic.slug question_num=question_num %}">
-              {% csrf_token %}
-                <p class="pt-3" >{{ current_question }} </p>
-                 {% if feedback_color %}
-                 <div class="options mt-4">
-                   <table class="table">
+                {% csrf_token %}
+                <p class="pt-3">{{ current_question }}</p>
+                {% if feedback_color %}
+                <div class="options mt-4">
+                  <table class="table">
                     <tbody>
-                    
-                    {% for option in opt_values %}
-                     <tr  class="{% if option == correct_ans %}green{% elif option == selected_option and selected_option != correct_ans %}red{% endif %}" >
-                        
-                          <td >
-                              <p> {{ option }} </p>
-                           </td>
-                          
+                      {% for option in opt_values %}
+                      <tr class="{% if option == correct_ans %}green{% elif option == selected_option and selected_option != correct_ans %}red{% endif %}">
+                        <td>
+                          <p>{{ option }}</p>
+                        </td>
                       </tr>
                       {% endfor %}
-                  </tbody>  
-                  </table> 
+                    </tbody>
+                  </table>
+                </div>
+                {% else %}
+                <div class="card mt-4 p-2">
+                  {% for option in opt_values %}
+                  <li><input type="radio" id="option{{ forloop.counter }}" class="m-3 mt-0 mb-0" name="selected_option" value="{{ option }}" required>
+                    <label class="mt-1 mb-1" for="option{{ forloop.counter }}">{{ option }}</label><br></li>
+                  {% endfor %}
+                </div>
+                {% endif %}
+                <input type="hidden" name="question_id" value="{{ current_question.id }}">
+              
+                    <div class="d-flex justify-content-between">
+                      <button type="submit" class="btn btn-primary mt-4 "  >Submit</button>
+                      <button type="submit" class="btn  mt-4 " value="important_ques" style=" border-color: rgb(227, 227, 227);" onclick="onSelectImportant()" id="important">
+                        <i class="bi bi-bookmark"></i>  Important</button>
+                      <button type="submit" class="btn  mt-4 " value="star_ques" style=" border-color: rgb(227, 227, 227);" onclick="onSelectStar()" id="star">
+                        <i class="bi bi-star" ></i>  Star</button>
+                      <button type="submit" class="btn  mt-4 " value="doubt_ques" style=" border-color: rgb(227, 227, 227);" onclick="onSelectDoubt()" id="doubt">
+                        <i class="bi bi-question-circle "></i>  Doubt</button>
+                      </div>
+                   {% if messages %}
+                      <ul class="dropdown-menu" aria-labelledby="bookmarkDropdown">
+                        {% for message in messages %}
+                        <li><span class="dropdown-item {{ message.tags }}">{{ message }}</span></li>
+                        {% endfor %}
+                      </ul>
+                  {% endif %}
                 
-                </div>
-              {% else %}
-              <div class="card mt-4 p-2">
-                {% for option in opt_values %}
-                <li><input type="radio" id="option{{ forloop.counter }}" class="m-3 mt-0 mb-0" name="selected_option" value="{{ option }}" required>
-                <label class="mt-1 mb-1" for="option{{ forloop.counter }}">{{ option }}</label><br></li>
-                {% endfor %}
-              </div>
-             {% endif %}
-              <input type="hidden" name="question_id" value="{{ current_question.id }}">
-
-             <div class="d-flex justify-content-between">
-              <input  type="submit" value="Submit" class="btn btn-primary mt-4">
-          <!--</form>-->
-              <div class="popover mt-4">
-                <button class="popover-btn btn hovered" onclick="togglePopover()"><i class="bi bi-bookmark"></i> Bookmark</button>
-                <div id="popoverContent" class="popover-content" style="display: none;">
-                    <!-- Popover content -->
-                    <form id="bookmarkForm" method="post" action="{% url 'mcq_quiz' topic_slug=topic.slug question_num=question_num %}">
-                        {% csrf_token %}
-                        <input type="hidden" name="question_id" value="{{ current_question.id }}">
-                        <input type="hidden" name="bookmark_category" id="bookmark_category" value="">
-                        <ul>
-                            <li><data-value="Important" name="bookmark_category" value="important">Important</li>
-                            <li><data-value="Star" name="bookmark_category" value="star">Star</li>
-                            <li><data-value="Doubt" name="bookmark_category" value="doubt">Doubt</li>
-                        </ul>
-                    </form>
-                </div>
             </div>
-            
-            
-            </div>
-            
-            
-          
+                
           {% if feedback_color == 'green' %}
           <div class="accordion mt-4" id="accordionPanelsStayOpenExample">
             <div class="accordion-item">
@@ -120,14 +110,9 @@
 
       {% endif %}
             
-          </div>
-        </div>
-        
-      </div>
-
       <div class="conatiner">
         <div class="row d-flex justify-content-center">
-          <div class=" col-12 col-md-8 col-lg-9  mt-5 mb-5">
+          <div class=" col-12 col-md-9 col-lg-10  mt-5 mb-5">
             <div class="card">
             <div class="card-header">
               <ul class="nav nav-tabs card-header-tabs">
@@ -150,8 +135,36 @@
             </div>
 
           <div id="notes" class="content p-5" style="overflow-y: scroll;">
-            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Repellendus suscipit placeat natus accusamus ullam dolore molestias perspiciatis. Sed consequatur fugiat odit neque id dolore, eius cupiditate magni voluptates ipsam doloribus tempore repudiandae perferendis accusantium, perspiciatis atque unde cum eos! Quos voluptates, nostrum placeat inventore, illo vel consequuntur corrupti quibusdam dolores eveniet asperiores eaque molestias ducimus aliquid dolorem fuga? Recusandae dolores magnam ullam, tenetur sed eum eius quas sint, veritatis alias a libero, nihil ut sunt eaque perspiciatis eveniet quasi iure nobis cumque facere iusto porro nam? Iure autem impedit possimus harum debitis. Similique omnis quaerat eveniet beatae hic possimus adipisci.</p>
-            <p>Medicine, a multifaceted discipline, encompasses the art and science of healing, maintaining health, and preventing diseases. Rooted in centuries of accumulated knowledge and propelled by contemporary advancements, medicine blends biology, chemistry, pharmacology, and technology to diagnose, treat, and cure ailments. From ancient herbal remedies to cutting-edge gene therapies, its evolution mirrors humanity's quest for understanding and conquering illness. Physicians, nurses, researchers, and healthcare professionals dedicate themselves to the pursuit of alleviating suffering and improving quality of life. In a world marked by diverse health challenges, medicine stands as a beacon of hope, continuously striving to enhance well-being and extend the boundaries of possibility.</p>
+            <p>
+
+              
+  
+              Surgery is a medical specialty that involves the use of operative techniques to investigate and treat various conditions or diseases in the body. It is a crucial aspect of healthcare, offering both diagnostic and therapeutic interventions. From routine procedures to complex surgeries, this field encompasses a wide range of techniques and approaches aimed at restoring health and improving quality of life.
+              
+              At its core, surgery involves the physical manipulation of tissues and organs to achieve a desired outcome. This can include removing diseased or damaged tissue, repairing injuries, correcting deformities, or even transplanting organs. Surgeons are highly trained medical professionals who possess both technical expertise and clinical knowledge to perform these procedures safely and effectively.
+              
+              The practice of surgery has evolved significantly over the centuries, driven by advancements in technology, anesthesia, and understanding of anatomy and physiology. Today, surgery encompasses various specialties, each focusing on specific areas of the body or types of procedures. These specialties include general surgery, orthopedic surgery, neurosurgery, cardiovascular surgery, plastic surgery, and many others.
+              
+              Before undergoing surgery, patients typically undergo a thorough evaluation to assess their overall health and determine the most appropriate treatment plan. This may involve diagnostic tests, consultations with specialists, and discussions about the risks and benefits of surgery. Informed consent is an essential aspect of the surgical process, ensuring that patients understand the procedure, its potential outcomes, and any associated risks.
+              </p><p>
+              The actual surgical procedure involves several key steps, beginning with anesthesia to ensure the patient is comfortable and pain-free during the operation. Depending on the type of surgery, anesthesia may be local (numbing a specific area), regional (numbing a larger area), or general (rendering the patient unconscious). Once anesthesia is administered, the surgeon makes incisions to access the surgical site.
+              
+              Throughout the procedure, the surgeon and operating room team use specialized instruments and equipment to perform the necessary manipulations and interventions. These may include scalpels, forceps, retractors, sutures, and various electronic devices for cutting, coagulating, or imaging. Surgical techniques can vary widely depending on the nature of the condition being treated and the goals of the procedure.
+              
+              After completing the necessary repairs or adjustments, the surgical site is carefully closed and dressed to promote healing and minimize the risk of infection. In some cases, additional post-operative care such as physical therapy or rehabilitation may be necessary to support recovery and restore function.
+              
+              While surgery can be highly effective in treating many conditions, it also carries inherent risks and potential complications. These can include bleeding, infection, anesthesia reactions, blood clots, and adverse reactions to medications or implants. Surgeons and healthcare teams take numerous precautions to minimize these risks, including thorough preoperative evaluation, meticulous surgical technique, and vigilant postoperative monitoring.
+            </p><p>
+              In recent years, technological innovations have revolutionized the field of surgery, leading to minimally invasive techniques such as laparoscopy and robotic-assisted surgery. These approaches offer benefits such as smaller incisions, shorter recovery times, and reduced risk of complications compared to traditional open surgery.
+              
+              Overall, surgery plays a vital role in modern medicine, offering hope and healing to millions of patients worldwide. Through ongoing research, innovation, and collaboration, surgeons continue to push the boundaries of what is possible, advancing the field and improving outcomes for patients now and in the future.
+              
+              
+              
+              
+              
+              
+          </p>       
           </div>
 
 
@@ -255,12 +268,18 @@
           </div>
         </div>
       </div>
-    </div>
-  </div>
+    </div>        
+    
+        
+        
+      
+
+      
+  
    
   <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js" integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy" crossorigin="anonymous"></script>
-  
+   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js" integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>  
   <script>
  
     const radioButtons = document.querySelectorAll('input[type="radio"]');
@@ -326,6 +345,60 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 </script>
+<script>
+  var ImportantBtnElement = document.getElementById('important')
+  var StarBtnElement = document.getElementById('star')
+  var DoubtBtnElement = document.getElementById('doubt')
+  function onSelectImportant(){
+     ImportantBtnElement.classList.toggle('bg-info')
+     ImportantBtnElement.classList.toggle('text-white')
+     StarBtnElement.classList.remove('bg-warning')
+     StarBtnElement.classList.remove('text-white')
+     DoubtBtnElement.classList.remove('bg-danger')
+     DoubtBtnElement.classList.remove('text-white')
+     StarBtnElement.innerHTML ='<i class="bi bi-star"></i> Star'
+     DoubtBtnElement.innerHTML ='<i class="bi bi-question-circle"></i> Doubt'
+     if (ImportantBtnElement.innerText === "Remove Important") {
+      ImportantBtnElement.innerHTML ='<i class="bi bi-bookmark"></i> Important'
+    } else {
+      ImportantBtnElement.innerText = "Remove Important"
+    }
+  }
+  function onSelectStar(){
+    StarBtnElement.classList.toggle('bg-warning')
+    StarBtnElement.classList.toggle('text-white')
+    ImportantBtnElement.classList.remove('bg-info')
+    ImportantBtnElement.classList.remove('text-white')
+    DoubtBtnElement.classList.remove('bg-danger')
+    DoubtBtnElement.classList.remove('text-white')
+    ImportantBtnElement.innerHTML ='<i class="bi bi-bookmark"></i> Important'
+    if (StarBtnElement.innerText === "Remove Star") {
+      StarBtnElement.innerHTML ='<i class="bi bi-star"></i> Star'
+    } else {
+      StarBtnElement.innerText = "Remove Star"
+    }
+  }
+  function onSelectDoubt(){
+    DoubtBtnElement.classList.toggle('bg-danger')
+    DoubtBtnElement.classList.toggle('text-white')
+    StarBtnElement.classList.remove('bg-warning')
+    StarBtnElement.classList.remove('text-white')
+    ImportantBtnElement.classList.remove('bg-info')
+    ImportantBtnElement.classList.remove('text-white')
+    ImportantBtnElement.innerHTML ='<i class="bi bi-bookmark"></i> Important'
+    StarBtnElement.innerHTML ='<i class="bi bi-star"></i> Star'
+    if (DoubtBtnElement.innerText === "Remove Doubt") {
+      DoubtBtnElement.innerHTML ='<i class="bi bi-question-circle"></i> Doubt'
+    } else {
+      DoubtBtnElement.innerText = "Remove Doubt"
+    }
+
+  }
+    
+  
+  
+</script>
+
 
       
 {% endblock %}

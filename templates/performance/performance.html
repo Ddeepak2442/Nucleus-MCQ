@@ -11,7 +11,8 @@
             {% for subject_name, data in performance_data.items %}
             <div class="col-12 col-md-6 mb-3">
                 <div class="card shadow hovered">
-                    <a href="{% url 'topic_performance' %}" style="color:black;">
+
+                    <a href="{% url 'topic_performance' subject_slug=subject_name.lower  %} " style="color:black;">
                         <div class="d-flex p-3" style="align-items: center;">
                             <div>
                                 <img src="{{ data.image.url }}" alt="{{ subject_name }}" style="width:60px" class="m-2 mb-0 mt-0 ml-0"/>
@@ -30,6 +31,10 @@
                             </p>
                         </div>
                     </a>
+                    
+                       
+            
+                    
                 </div>
             </div>
             {% endfor %}

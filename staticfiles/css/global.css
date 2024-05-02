@@ -324,4 +324,27 @@ font-size:15px;
       background-color: #ff8080; /* Change to your preferred shade of red */
   }
   
-    
+    /* Override Bootstrap dropdown item styles for messages */
+.dropdown-item.message-success {
+  color: #155724;
+  background-color: #d4edda;
+  border-color: #c3e6cb;
+}
+
+.dropdown-item.message-error {
+  color: #721c24;
+  background-color: #f8d7da;
+  border-color: #f5c6cb;
+}
+
+.dropdown-item.message-info {
+  color: #0c5460;
+  background-color: #d1ecf1;
+  border-color: #bee5eb;
+}
+
+.dropdown-item.message-warning {
+  color: #856404;
+  background-color: #fff3cd;
+  border-color: #ffeeba;
+}

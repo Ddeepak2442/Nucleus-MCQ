@@ -44,12 +44,23 @@ class GenerateSummaryView(LoginRequiredMixin,View):
         context = self.get_context_data(request)
         return render(request, self.template_name, context)
 
-    def get_context_data(self, request):
-        current_user=request.user
-        subjects = Subject.objects.all()
+    # def get_context_data(self):
+    #     try:
+    #         current_user=self.request.user
+    #     except AttributeError:
+    #     # Handle the case where self.request is not available
+    #         current_user = None
+    #     subjects = Subject.objects.all()
         
+        # performance_data = self.calculate_performance_data(current_user)
+        # return {'subjects': subjects, 'performance_data': performance_data}
+    def get_context_data(self, **kwargs):
+        current_user=self.request.user
+        data = super().get_context_data(**kwargs)
+        data['subjects'] =  Subject.objects.all()
         performance_data = self.calculate_performance_data(current_user)
-        return {'subjects': subjects, 'performance_data': performance_data}
+        data['performance_data'] = performance_data
+        return data
     def get_subject_name_by_id(self, subject_id):
         try:
             subject = Subject.objects.get(id=subject_id)
@@ -101,5 +112,6 @@ class GenerateSummaryView(LoginRequiredMixin,View):
             return HttpResponseBadRequest("User input is required.")
 
         result = self.call_gpt(user_input)
-        context = self.get_context_data(result=result)
+        context = self.get_context_data()
+        context['result'] = result 
         return render(request, self.template_name, context)

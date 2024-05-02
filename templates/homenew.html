@@ -1,8 +1,139 @@
 {% extends 'basemain.html' %} {% load static %} {% block content %}
 <div class="main">
-    <div class="text-center">
-      <h1 class="mt-5">Welcome To Nucleus !</h1>
-    </div>    
-  </div>
+  <div class="text-center">
+    <div class="row d-flex justify-content-center">
+      <div class="col-lg-10 card mt-5 mb-5 p-3">
+      <h1 class="p-2">Hello {{ user.full_name.upper }}</h1>
+      <h1 class="">Welcome To Nucleus !</h1>
+    </div>
+          </div>
+
+    <div class="conatienr">
+      <div class="row  d-flex justify-content-center">
+        <div class="col-lg-11">
+          <div id="carouselExampleIndicators" class="carousel slide" data-bs-ride="true">
+            <div class="carousel-indicators">
+              <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+              <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1" aria-label="Slide 2"></button>
+              <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="2" aria-label="Slide 3"></button>
+            </div>
+            <div class="carousel-inner">
+              <div class="carousel-item active">
+                <img src="{% static 'images/exam.jpg' %}" class="d-block w-100 " style="height:350px;" alt="home1">
+              </div>
+              <div class="carousel-item">
+                <img src="{%static 'images/exam1.jpg' %}" class="d-block w-100" style="height:350px;"   alt="home2">
+              </div>
+              <div class="carousel-item">
+                <img src="{% static 'images/exam3.jpg' %}" class="d-block w-100" style="height:350px;" alt="home3">
+              </div>
+            </div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
+              <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+              <span class="visually-hidden">Previous</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
+              <span class="carousel-control-next-icon" aria-hidden="true"></span>
+              <span class="visually-hidden">Next</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <h1 class="pt-5">MCQ Of The Day</h1>
+
+    <h1 id = "correct" class="pt-3" style="color:rgb(163, 246, 163)"></h1>
+    <h1 id = "wrong" class="pt-3"  style="color:rgb(245, 118, 118)"></h1>
+    <strong id="rightAnswer"></strong>
+
+    <div id ="mcqId">
+    <div class="container mt-2 mb-5">
+      <div class="row d-flex justify-content-center">
+      <div class=" col-lg-8 card">
+        <div class="card-body text-start">
+          <p class="card-title"><strong>Which of the following is not a function of bones in the human body?</</p>
+<hr>
+
+          <div class="form-check">
+            <input class="form-check-input" type="radio" name="option" id="optionA" value="optionA">
+            <label class="form-check-label" for="optionA">
+              Providing structure and support
+            </label>
+          </div>
+          <hr/>
+          <div class="form-check">
+            <input class="form-check-input" type="radio" name="option" id="optionB" value="optionB">
+            <label class="form-check-label" for="optionB">
+              Producing red blood cells
+            </label>
+          </div>
+          <hr/>
+          <div class="form-check">
+            <input class="form-check-input" type="radio" name="option" id="optionC" value="optionC">
+            <label class="form-check-label" for="optionC">
+              Storing minerals such as calcium and phosphorus
+            </label>
+          </div>
+          <hr/>
+          <div class="form-check">
+            <input class="form-check-input" type="radio" name="option" id="optionD" value="optionD">
+            <label class="form-check-label" for="optionD">
+              Transmitting electrical signals between nerve cells
+            </label>
+          </div>
+          <hr>
+          <button type="button" onclick ="onSubmit()" class="btn btn-primary">Submit</button>
+        </div>
+      </div>
+    </div>
+      </div>
+      </div> 
 </div>
+</div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous"></script>
+<script>
+document.querySelector("#sidebar").classList.add("expand");
+const hamBurger = document.querySelector(".toggle-btn");
+
+hamBurger.addEventListener("click", function () {
+document.querySelector("#sidebar").classList.toggle("expand");
+setTimeout(function () {
+    document.querySelector("#sidebar").style.transition = 'all .3s ease-out';
+}, 300); // Delay to match the transition duration
+});
+    </script>
+
+
+<script>
+let mcqIds = document.getElementById("mcqId");
+function onSubmit(){
+var selectAnswer = document.querySelector('input[name=option]:checked');
+var correct = document.getElementById("correct");
+var wrong = document.getElementById("wrong");
+var rightAnswer = document.getElementById("rightAnswer")
+
+if (!selectAnswer ){
+alert("please select a option")
+return;
+}
+else if (selectAnswer.value === "optionD"){
+console.log("correct")
+
+correct.textContent="Correct Answer !"
+wrong.textContent=""
+rightAnswer.textContent=""
+}
+else{
+console.log("wrong")
+correct.textContent=""
+wrong.textContent="Wrong Answer !"
+rightAnswer.textContent="Transmitting electrical signals between nerve cells - Option D"
+}
+}
+
+</script>
+
 {% endblock %}

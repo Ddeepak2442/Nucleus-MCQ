@@ -3,11 +3,11 @@
 {% block content %}
 <div class="main p-3">
     <div class="d-flex justify-content-center mb-4 adjustSmallscreen" style="align-items: center;">
-        <h1>Topic Performance</h1>
+        <h1>TOPIC PERFORMANCE of {{subject_name}}</h1>
     </div>
     <div class="container">
         <div class="row">
-            {% for topic_id, data in performance_data.items %}
+            {% for topic_name, data in performance_data.items %}
             <div class="col-12 col-md-6 mb-3">
                 <div class="card shadow hovered">
                     <a href="#" style="color:black;">
