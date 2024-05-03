@@ -10,9 +10,11 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from . models import Subject,Topic,Question,SubTopic
 from performance.models import user_performance
 from django.db.models import Count
-from performance.forms import BookmarkForm 
+from performance.forms import  ImportantQuestionForm, StarQuestionForm, DoubtQuestionForm
 from django.http import HttpRequest
 from django.http import HttpResponseNotAllowed
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
 
 
 class HomeView(TemplateView):
@@ -108,8 +110,9 @@ class MCQQuizView(LoginRequiredMixin, View):
 
         return context
 
-    def get(self, request, topic_slug, question_num):
+    def get(self, request, topic_slug, question_num ):
         context = self.get_context(request, topic_slug, question_num)
+
         return render(request, self.template_name, context)
     def correct_answer(self,question_id):
         question = get_object_or_404(Question,id=question_id)
@@ -118,67 +121,14 @@ class MCQQuizView(LoginRequiredMixin, View):
         dic = dict(zip(correct_options,opt_values))    
         correcr_ans = dic['1']
         return correcr_ans
-        
-    def bookmark_question(self, request, question_id, category):
-        # Ensure the user is authenticated
-        if not request.user.is_authenticated:
-            return HttpResponse('Unauthorized', status=401)
-
-        # Retrieve or create the user_performance record
-        user_history, created = user_performance.objects.get_or_create(
-            user=request.user,
-            defaults={'attempted_ques': '', 'answered_correct': '', 'important_ques': '', 'star_ques': '', 'doubt_ques': ''}
-            )
-        # Check if the question already exists in the specified category
-        if  'remove_bookmark' in request.POST and request.POST.get('remove_bookmark') == 'true':
-
-            if category == 'important_ques' and question_id in user_history.important_ques.split(';'):
-                user_history.important_ques = user_history.important_ques.replace(question_id + ';', '')
-            elif category == 'star_ques' and question_id in user_history.star_ques.split(';'):
-                user_history.star_ques = user_history.star_ques.replace(question_id + ';', '')
-            elif category == 'doubt_ques' and question_id in user_history.doubt_ques.split(';'):
-                user_history.doubt_ques = user_history.doubt_ques.replace(question_id + ';', '')
-
-            user_history.save()
-            return HttpResponse('Bookmark removed successfully', status=200)
-        # Check if the question already exists in the specified category
-        if category == 'important_ques' and question_id in user_history.important_ques.split(';'):
-            messages.error(request, 'Question already exists in important questions')
-            return HttpResponse('Question already exists in important questions', status=400)
-        elif category == 'star_ques' and question_id in user_history.star_ques.split(';'):
-            messages.error(request, 'Question already exists in starred questions')
-            return HttpResponse('Question already exists in starred questions', status=400)
-        elif category == 'doubt_ques' and question_id in user_history.doubt_ques.split(';'):
-            messages.error(request, 'Question already exists in doubtful questions')
-            return HttpResponse('Question already exists in doubtful questions', status=400)
-
-        # Add the question ID to the appropriate category
-        if category == 'important_ques':
-            user_history.important_ques += question_id + ';'
-        elif category == 'star_ques':
-            user_history.star_ques += question_id + ';'
-        elif category == 'doubt_ques':
-            user_history.doubt_ques += question_id + ';'
-        else:
-            print("Invalid bookmark category")
-            return HttpResponse('Invalid category', status=400)
-
-        user_history.save()
-        return HttpResponse('Bookmark added successfully', status=200)
     
-
-
     def post(self, request, topic_slug, question_num):
-        print("POST request received")
-    
         selected_option = request.POST.get('selected_option')
         question_id = request.POST.get('question_id')
         correct_ans = self.correct_answer(question_id)
         feedback_color = 'green' if selected_option == correct_ans else 'red'
 
-       # Update user history
         current_user = request.user
-        print(current_user)
         try:
             user_history = user_performance.objects.get(user=current_user)
         except user_performance.DoesNotExist:
@@ -186,58 +136,103 @@ class MCQQuizView(LoginRequiredMixin, View):
             user_history.attempted_ques += question_id + ';'
         if selected_option == correct_ans:
             user_history.answered_correct += question_id + ';'
-            print("correct answer", question_id)
-        else:
-            print("wrong answer")
 
         user_history.save()
-        # Handle bookmarking actions
-        bookmark_type = request.POST.get('bookmark_type')
-        remove_bookmark = request.POST.get('remove_bookmark') == 'true'
 
-        if bookmark_type:
-            # Call bookmark_question and capture the response
-            bookmark_response = self.bookmark_question(request, question_id, bookmark_type)
-            if bookmark_response.status_code != 200:
-             # If bookmarking failed, add error message
-                messages.error(request, bookmark_response.content.decode())
-            else:
-                # If bookmarking successful, add success message
-                messages.success(request, 'Bookmark added successfully')
-
-           # Handle bookmark removal
-        if 'remove_bookmark' in request.POST:
-            question_id = request.POST.get('question_id')
-            category = request.POST.get('category')
-            bookmark_response = self.bookmark_question(request, question_id, category)
-            if bookmark_response.status_code == 200:
-                # If removal is successful, redirect to a success page or return a success message
-                return HttpResponse('Question removed from bookmark category successfully', status=200)
-            else:
-                # If removal fails, handle the error
-                return HttpResponse('Failed to remove question from bookmark category', status=400)
-                # Handle bookmarking actions
-        bookmark_type = request.POST.get('bookmark_type')
-        if bookmark_type:
-            # Capture the response from bookmark_question and return it
-            response = self.bookmark_question(request, question_id, bookmark_type)
-            if response.status_code != 200:
-                # If response status code is not 200, return the response
-                return response
-
-
+       
         context = self.get_context(request, topic_slug, question_num)
         context['correct_ans'] = correct_ans
         context['feedback_color'] = feedback_color
-        # Ensure the bookmark form is always included in the context, even if not submitted
-        context['bookmark_form'] = BookmarkForm()
+        
         context['selected_option'] = selected_option
         context['question_id'] = question_id
-         # Get messages and add them to the context
         context['messages'] = messages.get_messages(request)
-        context['bookmark_remove'] = request.POST.get('remove_bookmark') == 'true'
+                # Handling important question form submission
+        if 'important_form' in request.POST:
+            important_form = ImportantQuestionForm(request.POST)
+            if important_form.is_valid():
+                question_ids = important_form.cleaned_data['question_ids']
+                user_history.important_ques += question_ids + ";"
+                user_history.save()
+        
+        # Handling star question form submission
+        if 'star_form' in request.POST:
+            star_form = StarQuestionForm(request.POST)
+            if star_form.is_valid():
+                question_ids = star_form.cleaned_data['question_ids']
+                user_history.star_ques += question_ids + ";"
+                user_history.save()
+
+        # Handling doubt question form submission
+        if 'doubt_form' in request.POST:
+            doubt_form = DoubtQuestionForm(request.POST)
+            if doubt_form.is_valid():
+                question_ids = doubt_form.cleaned_data['question_ids']
+                user_history.doubt_ques += question_ids + ";"
+                user_history.save()
+
+        context['important_form'] = ImportantQuestionForm()
+        context['star_form'] = StarQuestionForm()
+        context['doubt_form'] = DoubtQuestionForm()
+
         return render(request, self.template_name, context)
 
+@csrf_exempt
+def update_question_history(request):
+    print("Entered update_question_history view")
+    if request.method == 'POST':
+        question_id = request.POST.get('question_id')
+        action = request.POST.get('action')
+        print(f"Action: {action}, Question ID: {question_id}")
 
+        current_user = request.user
+        if not current_user.is_authenticated:
+            return JsonResponse({'status': 'error', 'message': 'User not authenticated'})
 
+        try:
+            user_history = user_performance.objects.get(user=current_user)
+            message = ''  # Initialize an empty message string
 
+            # Split the existing IDs into lists, remove any empty strings
+            important_ids = [id for id in user_history.important_ques.split(';') if id]
+            star_ids = [id for id in user_history.star_ques.split(';') if id]
+            doubt_ids = [id for id in user_history.doubt_ques.split(';') if id]
+
+            # Toggle the presence of the question_id in the respective list
+            if action == 'important':
+                if question_id in important_ids:
+                    important_ids.remove(question_id)
+                    message = 'Question removed from important questions.'
+                else:
+                    important_ids.append(question_id)
+                    message = 'Question added to important questions.'
+                user_history.important_ques = ';'.join(important_ids) + (';' if important_ids else '')
+
+            elif action == 'star':
+                if question_id in star_ids:
+                    star_ids.remove(question_id)
+                    message = 'Question removed from starred questions.'
+                else:
+                    star_ids.append(question_id)
+                    message = 'Question added to starred questions.'
+                user_history.star_ques = ';'.join(star_ids) + (';' if star_ids else '')
+
+            elif action == 'doubt':
+                if question_id in doubt_ids:
+                    doubt_ids.remove(question_id)
+                    message = 'Question removed from doubted questions.'
+                else:
+                    doubt_ids.append(question_id)
+                    message = 'Question added to doubted questions.'
+                user_history.doubt_ques = ';'.join(doubt_ids) + (';' if doubt_ids else '')
+
+            user_history.save()
+
+            return JsonResponse({'status': 'success', 'message': message})
+        except user_performance.DoesNotExist:
+            return JsonResponse({'status': 'error', 'message': 'User history not found'})
+        except Exception as e:
+            print(f"Error: {e}")  # Print any exception that occurs
+            return JsonResponse({'status': 'error', 'message': 'An error occurred'})
+    else:
+        return JsonResponse({'status': 'error', 'message': 'Invalid request'})

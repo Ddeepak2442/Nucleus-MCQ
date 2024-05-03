@@ -50,16 +50,45 @@
                 </div>
                 {% endif %}
                 <input type="hidden" name="question_id" value="{{ current_question.id }}">
-              
-                    <div class="d-flex justify-content-between">
-                      <button type="submit" class="btn btn-primary mt-4 "  >Submit</button>
-                      <button type="submit" class="btn  mt-4 " value="important_ques" style=" border-color: rgb(227, 227, 227);" onclick="onSelectImportant()" id="important">
-                        <i class="bi bi-bookmark"></i>  Important</button>
-                      <button type="submit" class="btn  mt-4 " value="star_ques" style=" border-color: rgb(227, 227, 227);" onclick="onSelectStar()" id="star">
-                        <i class="bi bi-star" ></i>  Star</button>
-                      <button type="submit" class="btn  mt-4 " value="doubt_ques" style=" border-color: rgb(227, 227, 227);" onclick="onSelectDoubt()" id="doubt">
-                        <i class="bi bi-question-circle "></i>  Doubt</button>
+                <form method="post" action="{% url 'mcq_quiz' topic_slug=topic.slug question_num=question_num %}">
+                  {% csrf_token %}
+                  
+                  <div class="d-flex justify-content-between">
+                      <button type="submit" class="btn btn-primary mt-4">Submit</button>
+                      
+                      <!-- Button to add question to important questions -->
+                      <button type="button" class="btn mt-4 addImportantButton" value="{{ current_question.id }}" style="border-color: #007bff"  >
+                          <i class="bi bi-bookmark"></i> Important
+                      </button>
+                      
+                      <!-- Button to add question to starred questions -->
+                      <button type="button" class="btn mt-4 addStarButton"  value="{{ current_question.id }}" style="border-color: #007bff"  >
+                          <i class="bi bi-star"></i> Star
+                      </button>
+                      
+                      <!-- Button to add question to doubtful questions -->
+                      <button type="button" class="btn mt-4 addDoubtButton"  value="{{ current_question.id }}" style="border-color: #007bff"  >
+                          <i class="bi bi-question-circle"></i> Doubt
+                      </button>
+                  </div>
+                  <!-- Toast Container -->
+                <div aria-live="polite" aria-atomic="true" style="position: relative; min-height: 200px;">
+                <!-- Toast -->
+                <div class="toast" id="toast-message" style="position: absolute; top: 0; right: 0;">
+                   <div class="toast-header">
+                      <strong class="mr-auto">Notification</strong>
+                      <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+                         <span aria-hidden="true">&times;</span>
+                      </button>
+                    </div>
+                      <div class="toast-body">
+                       <!-- Message will be inserted here -->
                       </div>
+                    </div>
+                  </div>
+              </form>
+              
+                    
                    {% if messages %}
                       <ul class="dropdown-menu" aria-labelledby="bookmarkDropdown">
                         {% for message in messages %}
@@ -293,7 +322,7 @@
       });
     });
   </script>
-    <script>
+<script>
 
 document.addEventListener('DOMContentLoaded', function() {
   document.getElementById('notes').classList.add('activ');
@@ -326,79 +355,50 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   });
 </script>
-
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script>
-  document.addEventListener('DOMContentLoaded', function() {
-  var popoverBtn = document.querySelector('.popover-btn');
-  var popoverContent = document.querySelector('.popover-content');
+  // Define showToast outside of the document ready function
+  function showToast(message) {
+    var toastElement = $('#toast-message');
+    toastElement.find('.toast-body').text(message);
+    toastElement.toast({ delay: 4000 }); // Set the delay for the toast
+    toastElement.toast('show'); // Show the toast
+  }
 
-  popoverBtn.addEventListener('click', function() {
-    popoverContent.style.display = popoverContent.style.display === 'block' ? 'none' : 'block';
-  });
+  // Define updateQuestionHistory outside of the document ready function
+  function updateQuestionHistory(questionId, action) {
+    var csrfToken = "{{ csrf_token }}";
+    $.ajax({
+        url: "{% url 'update_question_history' %}",
+        method: "POST",
+        headers: {"X-CSRFToken": csrfToken},
+        data: {
+            question_id: questionId,
+            action: action
+        },
+        success: function(response) {
+            showToast(response.message);
+            // Optionally, toggle the button class to reflect the change
+            if (response.status === 'success') {
+                $(`button[value='${questionId}']`).toggleClass('active');
+            }
+        },
+        error: function(xhr, status, error) {
+            showToast('An error occurred. Please try again.');
+        }
+    });
+  }
 
-  var popoverOptions = document.querySelectorAll('.popover-content ul li');
-  popoverOptions.forEach(function(option) {
-    option.addEventListener('click', function() {
-      popoverContent.style.display = 'none';
+  $(document).ready(function() {
+    // Event handlers for the buttons
+    $(".addImportantButton, .addStarButton, .addDoubtButton").click(function() {
+        var questionId = $(this).val();
+        var action = $(this).hasClass('addImportantButton') ? 'important' :
+                     $(this).hasClass('addStarButton') ? 'star' : 'doubt';
+        updateQuestionHistory(questionId, action);
     });
   });
-});
-
 </script>
-<script>
-  var ImportantBtnElement = document.getElementById('important')
-  var StarBtnElement = document.getElementById('star')
-  var DoubtBtnElement = document.getElementById('doubt')
-  function onSelectImportant(){
-     ImportantBtnElement.classList.toggle('bg-info')
-     ImportantBtnElement.classList.toggle('text-white')
-     StarBtnElement.classList.remove('bg-warning')
-     StarBtnElement.classList.remove('text-white')
-     DoubtBtnElement.classList.remove('bg-danger')
-     DoubtBtnElement.classList.remove('text-white')
-     StarBtnElement.innerHTML ='<i class="bi bi-star"></i> Star'
-     DoubtBtnElement.innerHTML ='<i class="bi bi-question-circle"></i> Doubt'
-     if (ImportantBtnElement.innerText === "Remove Important") {
-      ImportantBtnElement.innerHTML ='<i class="bi bi-bookmark"></i> Important'
-    } else {
-      ImportantBtnElement.innerText = "Remove Important"
-    }
-  }
-  function onSelectStar(){
-    StarBtnElement.classList.toggle('bg-warning')
-    StarBtnElement.classList.toggle('text-white')
-    ImportantBtnElement.classList.remove('bg-info')
-    ImportantBtnElement.classList.remove('text-white')
-    DoubtBtnElement.classList.remove('bg-danger')
-    DoubtBtnElement.classList.remove('text-white')
-    ImportantBtnElement.innerHTML ='<i class="bi bi-bookmark"></i> Important'
-    if (StarBtnElement.innerText === "Remove Star") {
-      StarBtnElement.innerHTML ='<i class="bi bi-star"></i> Star'
-    } else {
-      StarBtnElement.innerText = "Remove Star"
-    }
-  }
-  function onSelectDoubt(){
-    DoubtBtnElement.classList.toggle('bg-danger')
-    DoubtBtnElement.classList.toggle('text-white')
-    StarBtnElement.classList.remove('bg-warning')
-    StarBtnElement.classList.remove('text-white')
-    ImportantBtnElement.classList.remove('bg-info')
-    ImportantBtnElement.classList.remove('text-white')
-    ImportantBtnElement.innerHTML ='<i class="bi bi-bookmark"></i> Important'
-    StarBtnElement.innerHTML ='<i class="bi bi-star"></i> Star'
-    if (DoubtBtnElement.innerText === "Remove Doubt") {
-      DoubtBtnElement.innerHTML ='<i class="bi bi-question-circle"></i> Doubt'
-    } else {
-      DoubtBtnElement.innerText = "Remove Doubt"
-    }
-
-  }
-    
-  
-  
-</script>
-
-
-      
 {% endblock %}
+
+

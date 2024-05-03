@@ -348,3 +348,6 @@ font-size:15px;
   background-color: #fff3cd;
   border-color: #ffeeba;
 }
+.bookmark i{
+  color: rgba(245, 213, 4, 0.886);
+}
