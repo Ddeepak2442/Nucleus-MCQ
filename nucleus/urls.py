@@ -25,6 +25,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('',views.index,name='index'),
     path('summary/',views.GenerateSummaryView.as_view(),name='generate_summary'),
+    path('diet_plan/',views.DietPlanView.as_view(),name='diet_plan'),
     path('', include('MCQS.urls')),
     path('',include('performance.urls')),
     path('accounts/', include('Accounts.urls')),
