@@ -1,5 +1,4 @@
 from django.shortcuts import redirect, render, get_object_or_404
-from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse
 from django.views import View
 from django.contrib import messages
@@ -11,8 +10,6 @@ from . models import Subject,Topic,Question,SubTopic
 from performance.models import user_performance
 from django.db.models import Count
 from performance.forms import  ImportantQuestionForm, StarQuestionForm, DoubtQuestionForm
-from django.http import HttpRequest
-from django.http import HttpResponseNotAllowed
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 

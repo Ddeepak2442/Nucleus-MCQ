@@ -1,15 +1,11 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import TemplateView
-from django.views.generic import View
 from django.shortcuts import render
 from django.http import HttpResponseBadRequest
 import openai,os
 from dotenv import load_dotenv
 from openai import OpenAI
-
 from django.db.models import Count
-from django.http import JsonResponse
-from Accounts.models import UserProfile
 from performance.models import user_performance
 from MCQS.models import Subject, Question,Topic,SubTopic
 from .forms import HealthForm 

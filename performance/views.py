@@ -453,40 +453,7 @@ class PerformanceSummaryView(LoginRequiredMixin,TemplateView):
         })
         return context
 
-    # def get_context_data(self, request,**kwargs):
-    #     context = super().get_context_data(**kwargs)
-    #     current_user = request.user
-    #     subjects = Subject.objects.all()
-    #     subject_slug =  kwargs.get('subject_slug') 
-    #     topic_id = kwargs.get('topic_id')
-    #     print("subject_slug:",subject_slug)
-    #     selected_subject = None
-    #     selected_topic = None 
-    #     if  subject_slug:
-    #         selected_subject = get_object_or_404(Subject, slug=subject_slug)
-
-    #     topics = None
-    #     performance_data = None
-
-    #     if selected_subject:
-    #         topics =  Topic.objects.filter(subject_name=selected_subject)
-    #         if topic_id:
-    #           selected_topic = get_object_or_404(Topic, id=topic_id)
-
-    #         performance_data = self.calculate_performance_data(current_user, selected_subject)
-        
-    #     # Add 'subject_name' to the context
-    #     subject_name = selected_subject.subject_name if selected_subject else None
-    #     return {
-    #         'subjects': subjects,
-    #         'selected_subject': selected_subject,
-    #         'subject_name': subject_name, 
-    #         'topics': topics,
-    #         'selected_topic': selected_topic,  
-    #         'performance_data': performance_data
-    # }
-
-
+    
     def calculate_performance_data(self, user, subject=None):
         try:
             # Retrieve user performance data
