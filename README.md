@@ -1,5 +1,6 @@
 NUCLEUS-MCQ
 Description
+        About The Project
 NUCLEUS-MCQ is a comprehensive platform designed to assist medical students in preparing for various medical examinations. It offers a vast collection of Multiple Choice Questions (MCQs) covering a wide range of medical subjects and topics, meticulously curated to align with the latest exam patterns and syllabi.
 
 With NUCLEUS-MCQ, medical students can access a dynamic repository of practice questions to enhance their understanding of key concepts, reinforce their knowledge, and sharpen their problem-solving skills. The platform provides a user-friendly interface that allows students to navigate through different subjects, topics, and  enabling personalized learning experiences tailored to individual study needs.
