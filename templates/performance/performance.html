@@ -7,34 +7,34 @@
         <h1>SUBJECTS</h1>
     </div>
     <div class="container">
-        <div class="row">
+        <div class="d-flex justify-content-center row">
             {% for subject_name, data in performance_data.items %}
-            <div class="col-12 col-md-6 mb-3">
+            <div class="col-12 col-md-11 mb-3">
                 <div class="card shadow hovered">
-
-                    <a href="{% url 'topic_performance' subject_slug=subject_name.lower  %} " style="color:black;">
                         <div class="d-flex p-3" style="align-items: center;">
                             <div>
                                 <img src="{{ data.image.url }}" alt="{{ subject_name }}" style="width:60px" class="m-2 mb-0 mt-0 ml-0"/>
                             </div>
                             <div class="w-100 p-2 pt-0">
                                 <p>
-                                    <strong>{{ subject_name }}</strong>
+                                <p class="pb-0  ">
+                                    <a href="{% url 'topic_performance' subject_slug=subject_name.lower  %}" class=""><strong>{{ subject_name }}</strong></a>
                                 </p>
+                                <!-- <p class="pb-0"><a href="/home.html"><strong>Medicine</strong> </a></p> -->
                                 <div class="progress mt-0">
                                     <div class="progress-bar progress-bar-striped progress-bar-animated bg-primary" role="progressbar" style="width: {{ data.percentage }}%;" aria-valuenow="{{ data.percentage }}" aria-valuemin="0" aria-valuemax="100">
                                     </div>
+                                    
                                 </div>
+                                </p>
                             </div>
-                            <p style="padding-top: 50px; padding-right:10px">
+                             <p style="padding-top: 50px; padding-right:10px">
                                 {{ data.percentage }}%
-                            </p>
-                        </div>
-                    </a>
-                    
-                       
-            
-                    
+                            </p> 
+                            <a href="{% url 'performance_summary' subject_slug=subject_name.lower%}" class=""><button style="align-self: flex-start;" class="btn btn-primary  ">
+                                  Performance       
+                            </button></a>
+                    </div>
                 </div>
             </div>
             {% endfor %}

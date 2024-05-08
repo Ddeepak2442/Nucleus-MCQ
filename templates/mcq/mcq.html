@@ -1,7 +1,7 @@
 {% extends 'basemain.html' %} {% load static %} {% block content %}
     <div class="main">
       <div class="">
-        <a href="{% url 'subject_list'%}">
+        <a href="{{ back_to_topics_url }}">
           <button class="hovered p-2 mb-0 m-3" 
         style="border-width: 0px;
         border-radius: 5px;">
@@ -14,14 +14,27 @@
         <div class="row d-flex justify-content-center">
           <div class="col-12 col-md-9 col-lg-10">
             <div class="d-flex justify-content-between shadow mt-3 p-2 pb-1" style="align-items: center;">
-              
+              <div class="d-flex" style="align-items: center;"> 
               <button class="mt-1 mb-2 hovered btn p-2 text-center" onclick="location.href='{% url 'mcq_quiz' topic_slug=topic.slug question_num=question_num|add:'-1' %}'" style= "width:100px; border-color: rgb(227, 227, 227);">
                 Prev
               </button>
-              <p class="pt-1">Question  {{ question_num }} of {{ total_questions }}</p>
+              <p  class=" m-3">Question  {{ question_num }} of {{ total_questions }}</p>
+              </div>
+              <div class="d-flex" style="align-items: center;">
+              <button type="button" class=" p-2  mt-3 mb-3 addImportantButton" id="bookmark"  data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Bookmark"  value="{{ current_question.id }}"
+              style="border-width: 0px;
+                 background-color: transparent;" >
+                <i class="bi bi-bookmark "></i> 
+            </button>
+            <button class=" p-2  m-3 addDoubtButton" id="revise" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Revise" value="{{ current_question.id }}"
+               style="border-width: 0px;
+                 background-color: transparent;">
+         <i class="bi bi-flag"></i>
+                </button>
               <button class="mt-1 mb-2 hovered btn p-2 text-center" onclick="location.href='{% url 'mcq_quiz' topic_slug=topic.slug question_num=question_num|add:'1' %}'" style= "width:100px; border-color: rgb(227, 227, 227);">
                 Next
               </button>
+              </div>
               
             </div>
             <form method="post" action="{% url 'mcq_quiz' topic_slug=topic.slug question_num=question_num %}">
@@ -56,36 +69,10 @@
                   <div class="d-flex justify-content-between">
                       <button type="submit" class="btn btn-primary mt-4">Submit</button>
                       
-                      <!-- Button to add question to important questions -->
-                      <button type="button" class="btn mt-4 addImportantButton" value="{{ current_question.id }}" style="border-color: #007bff"  >
-                          <i class="bi bi-bookmark"></i> Important
-                      </button>
-                      
-                      <!-- Button to add question to starred questions -->
-                      <button type="button" class="btn mt-4 addStarButton"  value="{{ current_question.id }}" style="border-color: #007bff"  >
-                          <i class="bi bi-star"></i> Star
-                      </button>
-                      
-                      <!-- Button to add question to doubtful questions -->
-                      <button type="button" class="btn mt-4 addDoubtButton"  value="{{ current_question.id }}" style="border-color: #007bff"  >
-                          <i class="bi bi-question-circle"></i> Doubt
-                      </button>
+        
                   </div>
-                  <!-- Toast Container -->
-                <div aria-live="polite" aria-atomic="true" style="position: relative; min-height: 200px;">
-                <!-- Toast -->
-                <div class="toast" id="toast-message" style="position: absolute; top: 0; right: 0;">
-                   <div class="toast-header">
-                      <strong class="mr-auto">Notification</strong>
-                      <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
-                         <span aria-hidden="true">&times;</span>
-                      </button>
-                    </div>
-                      <div class="toast-body">
-                       <!-- Message will be inserted here -->
-                      </div>
-                    </div>
-                  </div>
+                
+                
               </form>
               
                     
@@ -100,6 +87,9 @@
             </div>
                 
           {% if feedback_color == 'green' %}
+          <div class="container">
+            <div class="row d-flex justify-content-center">
+              <div class="col-12 col-md-9 col-lg-10">
           <div class="accordion mt-4" id="accordionPanelsStayOpenExample">
             <div class="accordion-item">
                 <h2 class="accordion-header" id="panelsStayOpen-headingOne">
@@ -119,6 +109,10 @@
         </div>
 
       {% elif feedback_color == 'red' %}
+      <div class="container">
+        <div class="row d-flex justify-content-center">
+          <div class="col-12 col-md-9 col-lg-10">
+
           <div class="accordion mt-4" id="accordionPanelsStayOpenExample">
             <div class="accordion-item">
                 <h2 class="accordion-header" id="panelsStayOpen-headingOne">
@@ -136,10 +130,11 @@
                 </div>
             </div>
         </div>
-
+</div>
       {% endif %}
-            
-      <div class="conatiner">
+      </div>
+            </div></div>
+      <!-- <div class="conatiner">
         <div class="row d-flex justify-content-center">
           <div class=" col-12 col-md-9 col-lg-10  mt-5 mb-5">
             <div class="card">
@@ -298,7 +293,7 @@
         </div>
       </div>
     </div>        
-    
+     -->
         
         
       
@@ -322,23 +317,7 @@
       });
     });
   </script>
-<script>
 
-document.addEventListener('DOMContentLoaded', function() {
-  document.getElementById('notes').classList.add('activ');
-
-  document.querySelectorAll('.nav-link').forEach(button => {
-    button.addEventListener('click', function() {
-      const target = this.getAttribute('data-target');
-      document.querySelectorAll('.content').forEach(content => {
-        content.classList.remove('activ');
-      });
-      document.getElementById(target).classList.add('activ');
-    });
-  });
-});
-
-</script>
 
 
 <script>
@@ -354,16 +333,13 @@ document.addEventListener('DOMContentLoaded', function() {
       });
     });
   });
-</script>
+</script> 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script>
   // Define showToast outside of the document ready function
-  function showToast(message) {
-    var toastElement = $('#toast-message');
-    toastElement.find('.toast-body').text(message);
-    toastElement.toast({ delay: 4000 }); // Set the delay for the toast
-    toastElement.toast('show'); // Show the toast
-  }
+  var bookmarkElement =  document.getElementById("bookmark");
+  var reviseElement = document.getElementById("revise")
+  
 
   // Define updateQuestionHistory outside of the document ready function
   function updateQuestionHistory(questionId, action) {
@@ -376,13 +352,41 @@ document.addEventListener('DOMContentLoaded', function() {
             question_id: questionId,
             action: action
         },
+        
         success: function(response) {
-            showToast(response.message);
-            // Optionally, toggle the button class to reflect the change
+            
             if (response.status === 'success') {
-                $(`button[value='${questionId}']`).toggleClass('active');
+             
+              if (action === "important") {
+                reviseElement.innerHTML = '<i class="bi bi-flag"></i>'                                         
+                reviseElement.classList.remove('bookmark')
+                if (bookmarkElement.innerHTML=== '<i class="bi bi-bookmark-fill"></i>'){
+    bookmarkElement.innerHTML = '<i class="bi bi-bookmark"></i>'
+    bookmarkElement.classList.remove('bookmark')
+    }else{
+      bookmarkElement.innerHTML = '<i class="bi bi-bookmark-fill"></i>'
+      bookmarkElement.classList.add('bookmark')
+    }
+
+               }
+              else if (action==="doubt") {
+                if (reviseElement.innerHTML=== '<i class="bi bi-flag-fill"></i>'){
+                  reviseElement.innerHTML = '<i class="bi bi-flag"></i>'                                         
+                    reviseElement.classList.remove('bookmark')
+               }
+               else{
+      reviseElement.innerHTML = '<i class="bi bi-flag-fill"></i>'
+      reviseElement.classList.add('bookmark')
+    }
+    
+    bookmarkElement.innerHTML = '<i class="bi bi-bookmark"></i>'
+      bookmarkElement.classList.remove('bookmark')  
+              
+              }
+             
             }
         },
+
         error: function(xhr, status, error) {
             showToast('An error occurred. Please try again.');
         }
@@ -396,8 +400,59 @@ document.addEventListener('DOMContentLoaded', function() {
         var action = $(this).hasClass('addImportantButton') ? 'important' :
                      $(this).hasClass('addStarButton') ? 'star' : 'doubt';
         updateQuestionHistory(questionId, action);
+
+        // Toggle color for the icon
+        var icon = button.find('i.bi');
+
+        if (button.hasClass('active')) {
+            icon.removeClass('bi-bookmark bi-flag'); // Remove the filled icons
+            icon.addClass('bi-bookmark-plus bi-flag-fill'); // Add the outlined icons
+        } else {
+            icon.removeClass('bi-bookmark-plus bi-flag-fill'); // Remove the outlined icons
+            icon.addClass('bi-bookmark bi-flag'); // Add the filled icons
+        }
     });
-  });
+});
+  
+</script>
+<!-- <script>
+  var bookmarkElement =  document.getElementById("bookmark");
+  var reviseElement = document.getElementById("revise")
+  //var questionId = document.getClassName("value")
+  //console.log(questionId)
+    function onBookmark() {
+       var questionId = $(this).val();
+       var csrfToken = "{{ csrf_token }}";
+      console.log(questionId)
+      $.ajax({
+          url: "{% url 'update_question_history' %}",
+          method: "POST",
+          headers: {"X-CSRFToken": csrfToken},
+          data: {
+              question_id: questionId,
+              action: "important"
+          },
+          success: function(response) {
+              // Optionally, toggle the button class to reflect the change
+              if (response.status === 'success') {
+                bookmarkElement.innerHTML = '<i class="bi bi-bookmark-fill"></i>'
+                bookmarkElement.classList.add('bookmark')
+              }else{
+                bookmarkElement.innerHTML = '<i class="bi bi-bookmark"></i>'
+                bookmarkElement.classList.remove('bookmark')
+              }
+        },
+        error: function(xhr, status, error) {
+            alert('An error occurred. Please try again.');
+        }
+    });
+  }
+
+</script> -->
+  
+<script>
+  const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
 </script>
 {% endblock %}
 

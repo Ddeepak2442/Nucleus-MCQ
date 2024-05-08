@@ -6,10 +6,10 @@
         <div class="row d-flex justify-content-center">
             <div class="col-12 col-md-10">
                 <div class="d-flex justify-content-between shadow mt-3">
-                    <p class="pt-3" style="background-color: yellow;">BOOKMARK QUESTIONS RELATED TO TOPIC: {{ topic_name }} OF SUBJECT: {{ subject_name }}</p>
+                    <p class="pt-3" style="background-color: yellow;">Revise QUESTIONS RELATED TO TOPIC: {{ topic_name }} OF SUBJECT: {{ subject_name }}</p>
                 </div>
-                {% for question in important_questions %}
-                <form method="post" action="{% url 'important_questions' %}">
+                {% for question in doubt_questions %}
+                <form method="post" action="{% url 'doubt_questions' %}">
                     {% csrf_token %}
                     <p class="pt-3">{{ question.question }}</p>
                     <div class="options mt-4">
@@ -46,16 +46,16 @@
                 <!-- Pagination Links -->
                 <div class="pagination mt-4">
                     <span class="step-links">
-                        {% if important_questions.has_previous %}
+                        {% if doubt_questions.has_previous %}
                             <a href="?page=1">&laquo; first</a>
-                            <a href="?page={{ important_questions.previous_page_number }}">previous</a>
+                            <a href="?page={{ doubt_questions.previous_page_number }}">previous</a>
                         {% endif %}
                         <span class="current">
-                            Page {{ important_questions.number }} of {{ important_questions.paginator.num_pages }}.
+                            Page {{ doubt_questions.number }} of {{ doubt_questions.paginator.num_pages }}.
                         </span>
-                        {% if important_questions.has_next %}
-                            <a href="?page={{ important_questions.next_page_number }}">next</a>
-                            <a href="?page={{ important_questions.paginator.num_pages }}">last &raquo;</a>
+                        {% if doubt_questions.has_next %}
+                            <a href="?page={{ doubt_questions.next_page_number }}">next</a>
+                            <a href="?page={{ doubt_questions.paginator.num_pages }}">last &raquo;</a>
                         {% endif %}
                     </span>
                 </div>

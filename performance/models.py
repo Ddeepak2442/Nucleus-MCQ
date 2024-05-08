@@ -8,9 +8,8 @@ class user_performance(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL,  on_delete=models.SET_NULL,null=True)
     attempted_ques =models.TextField()
     answered_correct =models.TextField()
-    important_ques =models.TextField(blank=True,null=True)
-    star_ques =models.TextField(blank=True,null=True)
-    doubt_ques =models.TextField(blank=True,null=True)
+    bookmark_ques =models.TextField(blank=True,null=True)
+    revise_ques =models.TextField(blank=True,null=True)
 
     def __str__(self):
         return self.user.email

@@ -1,0 +1,34 @@
+{% extends 'basemain.html' %}
+
+{% block content %}
+<div class="main p-3">
+    <h3>Performance Summary of {{subject_name}}</h3>
+    {% if performance_data %}
+        <ul>
+            {% for topic_name, data in performance_data.items %}
+                <li>{{ topic_name }}: {{ data.percentage }}%</li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No performance data available.</p>
+    {% endif %}
+
+    <h3>Summary Generator</h3>
+
+    <form method="post" autocomplete="off">
+        {% csrf_token %}
+        <input type="text" class="form-control" name="user_input">
+        <button type="submit" class="btn btn-primary mt-3">
+            Submit
+        </button>
+    </form>
+    <br>
+
+    {% if result %}
+        <div>
+            {{ result }}
+            <br>
+        </div>
+    {% endif %}
+</div>
+{% endblock content %}

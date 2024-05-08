@@ -315,6 +315,16 @@ font-size:15px;
     .hovered:hover i {
       color:white;
     }
+    .hovered:hover a {
+      color:white;
+    }
+    .hovered:hover strong {
+      color:white;
+    }
+    .hovered:hover button {
+      background-color:white;
+      color:#007bff;
+    }
     .green {
       background-color: #80ff80;
        /* Change to your preferred shade of green */

@@ -60,7 +60,7 @@ class TopicListView(ListView):
           subject = get_object_or_404(Subject, slug=subject_slug)
           context['subject'] = subject
         return context
-
+   
 class MCQQuizView(LoginRequiredMixin, View):
     template_name = 'mcq/mcq.html'
 
@@ -96,6 +96,9 @@ class MCQQuizView(LoginRequiredMixin, View):
         print("Debugging - Retrieved options:", opt_values)
         correct_options_list = current_question.correct_options.split(';')
 
+        # Construct URL for back to topics
+        back_to_topics_url = reverse('topic_list', kwargs={'subject_slug': topic.subject_name.slug})
+
         # Prepare context
         context = {
             'topic': topic,
@@ -106,6 +109,7 @@ class MCQQuizView(LoginRequiredMixin, View):
             'question_num': question_num,
             'total_questions': len(questions),
             'feedback_color': feedback_color,
+            'back_to_topics_url': back_to_topics_url,
         }
 
         return context
@@ -202,10 +206,10 @@ def update_question_history(request):
             if action == 'important':
                 if question_id in important_ids:
                     important_ids.remove(question_id)
-                    message = 'Question removed from important questions.'
+                    message = 'Question removed from bookmark questions.'
                 else:
                     important_ids.append(question_id)
-                    message = 'Question added to important questions.'
+                    message = 'Question added to bookmark questions.'
                 user_history.important_ques = ';'.join(important_ids) + (';' if important_ids else '')
 
             elif action == 'star':

@@ -50,6 +50,7 @@ class GenerateSummaryView(LoginRequiredMixin,TemplateView):
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(**kwargs)  # Correctly use super() with TemplateView
         current_user = self.request.user
+        
         context['subjects'] = Subject.objects.all()
         performance_data = self.calculate_performance_data(current_user)
         context['performance_data'] = performance_data

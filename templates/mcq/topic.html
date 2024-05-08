@@ -1,20 +1,20 @@
 {% extends 'basemain.html' %} {% load static %} {% block content %}
         <div class="main p-3">
-            <div>
+            <!-- <div>
                 <a href="{% url 'home_new' %}">
                     <button class="hovered p-2" style="border-width: 0px;   border-radius: 5px; border-bottom-right-radius: 6px; border-top-left-radius: 6px;">HOME</button>
                 </a>
                 <a href="{% url 'subject_list' %}">
                     <button class="hovered p-2" style="border-width: 0px;  border-radius: 5px; border-bottom-right-radius: 6px; border-top-left-radius: 6px;">SUBJECTS</button>
                 </a>
-            </div>
+            </div> -->
             <div class="d-flex justify-content-center mb-4 adjustSmallscreen" style="align-items: center;">
                 <h1>TOPICS OF {{subject.subject_name}}</h1>
             </div>
             <div class="container">
                 <div class="row">
                     {% for topic in topics %}
-                    <div class="col-12 col-lg-6 mb-3">
+                    <div class="col-12 col-lg-10 mb-3">
                         <div class="card shadow p-3 hovered ">
                             <a href="{% url 'mcq_quiz' topic_slug=topic.slug question_num=1 %}" style="color:black;">
                                 <div class="d-flex justify-content-between hovered " style="align-items: center;">
