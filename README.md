@@ -17,6 +17,8 @@ NUCLEUS-MCQ aims to empower medical aspirants with a robust study tool that not 
 ![Homepage](screenshots/nucleushome.png)
 
 Setup Instructions
+
+
 1.Clone the repository git clone https://github.com/Ddeepak2442/Nucleus-MCQ.git
 2.Navigrate to the working directory  cd Nucleus-MCQ
 3.Open the project from the code editor code . or atom .
