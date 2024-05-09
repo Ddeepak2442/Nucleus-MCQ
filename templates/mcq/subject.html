@@ -16,9 +16,9 @@
             
             </div>
                 <div class="container">                     
-                    <div class="row">
+                    <div class="row justify-content-center">
                       {% for subject in subjects %}
-                    <div class="col-12 col-md-10 mb-3">
+                    <div class="col-12 col-md-11 mb-3">
                         <div class="card shadow p-3  hovered">
                           <a href="{% url 'topic_list' subject_slug=subject.slug   %}" style="color:black;">
 

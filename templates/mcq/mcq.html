@@ -415,40 +415,7 @@
 });
   
 </script>
-<!-- <script>
-  var bookmarkElement =  document.getElementById("bookmark");
-  var reviseElement = document.getElementById("revise")
-  //var questionId = document.getClassName("value")
-  //console.log(questionId)
-    function onBookmark() {
-       var questionId = $(this).val();
-       var csrfToken = "{{ csrf_token }}";
-      console.log(questionId)
-      $.ajax({
-          url: "{% url 'update_question_history' %}",
-          method: "POST",
-          headers: {"X-CSRFToken": csrfToken},
-          data: {
-              question_id: questionId,
-              action: "important"
-          },
-          success: function(response) {
-              // Optionally, toggle the button class to reflect the change
-              if (response.status === 'success') {
-                bookmarkElement.innerHTML = '<i class="bi bi-bookmark-fill"></i>'
-                bookmarkElement.classList.add('bookmark')
-              }else{
-                bookmarkElement.innerHTML = '<i class="bi bi-bookmark"></i>'
-                bookmarkElement.classList.remove('bookmark')
-              }
-        },
-        error: function(xhr, status, error) {
-            alert('An error occurred. Please try again.');
-        }
-    });
-  }
 
-</script> -->
   
 <script>
   const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')

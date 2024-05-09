@@ -153,27 +153,27 @@ class MCQQuizView(LoginRequiredMixin, View):
             important_form = ImportantQuestionForm(request.POST)
             if important_form.is_valid():
                 question_ids = important_form.cleaned_data['question_ids']
-                user_history.important_ques += question_ids + ";"
+                user_history.bookmark_ques += question_ids + ";"
                 user_history.save()
         
         # Handling star question form submission
-        if 'star_form' in request.POST:
-            star_form = StarQuestionForm(request.POST)
-            if star_form.is_valid():
-                question_ids = star_form.cleaned_data['question_ids']
-                user_history.star_ques += question_ids + ";"
-                user_history.save()
+        # if 'star_form' in request.POST:
+        #     star_form = StarQuestionForm(request.POST)
+        #     if star_form.is_valid():
+        #         question_ids = star_form.cleaned_data['question_ids']
+        #         user_history.star_ques += question_ids + ";"
+        #         user_history.save()
 
         # Handling doubt question form submission
         if 'doubt_form' in request.POST:
             doubt_form = DoubtQuestionForm(request.POST)
             if doubt_form.is_valid():
                 question_ids = doubt_form.cleaned_data['question_ids']
-                user_history.doubt_ques += question_ids + ";"
+                user_history.revise_ques += question_ids + ";"
                 user_history.save()
 
         context['important_form'] = ImportantQuestionForm()
-        context['star_form'] = StarQuestionForm()
+        #context['star_form'] = StarQuestionForm()
         context['doubt_form'] = DoubtQuestionForm()
 
         return render(request, self.template_name, context)
@@ -195,9 +195,9 @@ def update_question_history(request):
             message = ''  # Initialize an empty message string
 
             # Split the existing IDs into lists, remove any empty strings
-            important_ids = [id for id in user_history.important_ques.split(';') if id]
-            star_ids = [id for id in user_history.star_ques.split(';') if id]
-            doubt_ids = [id for id in user_history.doubt_ques.split(';') if id]
+            important_ids = [id for id in user_history.bookmark_ques.split(';') if id]
+            #star_ids = [id for id in user_history.star_ques.split(';') if id]
+            doubt_ids = [id for id in user_history.revise_ques.split(';') if id]
 
             # Toggle the presence of the question_id in the respective list
             if action == 'important':
@@ -207,16 +207,16 @@ def update_question_history(request):
                 else:
                     important_ids.append(question_id)
                     message = 'Question added to bookmark questions.'
-                user_history.important_ques = ';'.join(important_ids) + (';' if important_ids else '')
+                user_history.bookmark_ques = ';'.join(important_ids) + (';' if important_ids else '')
 
-            elif action == 'star':
-                if question_id in star_ids:
-                    star_ids.remove(question_id)
-                    message = 'Question removed from starred questions.'
-                else:
-                    star_ids.append(question_id)
-                    message = 'Question added to starred questions.'
-                user_history.star_ques = ';'.join(star_ids) + (';' if star_ids else '')
+            # elif action == 'star':
+            #     if question_id in star_ids:
+            #         star_ids.remove(question_id)
+            #         message = 'Question removed from starred questions.'
+            #     else:
+            #         star_ids.append(question_id)
+            #         message = 'Question added to starred questions.'
+            #     user_history.star_ques = ';'.join(star_ids) + (';' if star_ids else '')
 
             elif action == 'doubt':
                 if question_id in doubt_ids:
@@ -225,7 +225,7 @@ def update_question_history(request):
                 else:
                     doubt_ids.append(question_id)
                     message = 'Question added to doubted questions.'
-                user_history.doubt_ques = ';'.join(doubt_ids) + (';' if doubt_ids else '')
+                user_history.revise_ques = ';'.join(doubt_ids) + (';' if doubt_ids else '')
 
             user_history.save()
 
