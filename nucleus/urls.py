@@ -29,5 +29,6 @@ urlpatterns = [
     path('', include('MCQS.urls')),
     path('',include('performance.urls')),
     path('accounts/', include('Accounts.urls')),
+    path('', include('TUTORMODE.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

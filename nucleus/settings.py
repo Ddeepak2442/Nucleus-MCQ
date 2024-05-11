@@ -49,6 +49,7 @@ OUR_APPS = [
     'Accounts',
     'MCQS',
     'performance',
+    'TUTORMODE',
 ]
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + OUR_APPS
 MIDDLEWARE = [

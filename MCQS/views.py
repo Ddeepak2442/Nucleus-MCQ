@@ -9,7 +9,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from . models import Subject,Topic,Question,SubTopic
 from performance.models import user_performance
 from django.db.models import Count
-from performance.forms import  ImportantQuestionForm, StarQuestionForm, DoubtQuestionForm
+from performance.forms import  ImportantQuestionForm,  DoubtQuestionForm
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 
@@ -148,7 +148,7 @@ class MCQQuizView(LoginRequiredMixin, View):
         context['selected_option'] = selected_option
         context['question_id'] = question_id
         context['messages'] = messages.get_messages(request)
-                # Handling important question form submission
+                # Handling bookmark question form submission
         if 'important_form' in request.POST:
             important_form = ImportantQuestionForm(request.POST)
             if important_form.is_valid():
@@ -156,15 +156,7 @@ class MCQQuizView(LoginRequiredMixin, View):
                 user_history.bookmark_ques += question_ids + ";"
                 user_history.save()
         
-        # Handling star question form submission
-        # if 'star_form' in request.POST:
-        #     star_form = StarQuestionForm(request.POST)
-        #     if star_form.is_valid():
-        #         question_ids = star_form.cleaned_data['question_ids']
-        #         user_history.star_ques += question_ids + ";"
-        #         user_history.save()
-
-        # Handling doubt question form submission
+        
         if 'doubt_form' in request.POST:
             doubt_form = DoubtQuestionForm(request.POST)
             if doubt_form.is_valid():
@@ -173,7 +165,6 @@ class MCQQuizView(LoginRequiredMixin, View):
                 user_history.save()
 
         context['important_form'] = ImportantQuestionForm()
-        #context['star_form'] = StarQuestionForm()
         context['doubt_form'] = DoubtQuestionForm()
 
         return render(request, self.template_name, context)
@@ -209,14 +200,6 @@ def update_question_history(request):
                     message = 'Question added to bookmark questions.'
                 user_history.bookmark_ques = ';'.join(important_ids) + (';' if important_ids else '')
 
-            # elif action == 'star':
-            #     if question_id in star_ids:
-            #         star_ids.remove(question_id)
-            #         message = 'Question removed from starred questions.'
-            #     else:
-            #         star_ids.append(question_id)
-            #         message = 'Question added to starred questions.'
-            #     user_history.star_ques = ';'.join(star_ids) + (';' if star_ids else '')
 
             elif action == 'doubt':
                 if question_id in doubt_ids:
@@ -237,3 +220,6 @@ def update_question_history(request):
             return JsonResponse({'status': 'error', 'message': 'An error occurred'})
     else:
         return JsonResponse({'status': 'error', 'message': 'Invalid request'})
+    
+
+
