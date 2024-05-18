@@ -1,5 +1,108 @@
-{% extends 'basemain.html' %} {% load static %} {% block content %}
+{% extends 'basemain.html' %}
+{% load static %}
+{% block content %}
 <div class="main p-3">
-    <h1>SUBTOPICS OF NOTE</h1>
+<div class="container">
+    <h1 class="text-center">Subtopic Name: {{ sub_topic_name }}</h1>
+    
+    <div class="column justify-content-center">
+        <div class="col-12 text-center">
+            <h2>Notes for {{ sub_topic_name }}</h2>
+            <ul class="list-group">
+                {% for note in notes %}
+                    <li class="list-group-item">{{ note.note }}</li>
+                    <li class="list-group-item">{{ note.sub_topic_name.sub_topic_name }}</li>
+                {% empty %}
+                    <li class="list-group-item">No notes available.</li>
+                {% endfor %}
+            </ul>
+        </div>
+        <div class="col-12 text-center mt-3">
+            <h2>Update a New Note</h2>
+            <form action="{% url 'note' subject_slug=subject_slug topic_slug=topic_slug sub_topic_slug=sub_topic_slug %}" method="post">
+                {% csrf_token %}
+                <textarea name="user_note" id="userNote" class="form-control" placeholder="Add your note here...">{% if user_notes %}{{ user_notes.0 }}{% endif %}</textarea>
+                <button type="submit" name="action" value="add_note" class="btn btn-primary mt-2 mb-2">Add Note</button>
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                    Clear Note
+                </button>
+
+                <!-- Modal -->
+                <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h1 class="modal-title fs-5" id="exampleModalLabel">Clear Note</h1>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                Are you sure you want to clear the note?
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                <button type="submit" name="action" value="clear_note" class="btn btn-primary">Save changes</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+                    
+            <form action="{% url 'note' subject_slug=subject_slug topic_slug=topic_slug sub_topic_slug=sub_topic_slug %}" method="post">
+                {% csrf_token %}
+                <div class="text-center">
+                    <button type="submit" name="action" value="generate_mcq" class="btn btn-primary mt-2">Generate MCQs</button>
+                </div>
+            </form>
+
+            {% if result %}
+            <h2>Generated MCQs:</h2>
+            <div id="quiz">
+                {% for question_id, question_data in result.items %}
+                <div class="question" id="{{ question_id|slugify }}">
+                    <p>{{ question_data.Question }}</p>
+                    <ul class="options list-group">
+                        {% for option_key, option_value in question_data.Options.items %}
+                        <li class="list-group-item">
+                            <button onclick="checkAnswer('{{ question_id|slugify }}', '{{ option_key }}')" class="btn btn-outline-primary">
+                                {{ option_key }}: {{ option_value }}
+                            </button>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                    <p class="explanation" id="explanation_{{ question_id|slugify }}"></p>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <p>No MCQs generated.</p>
+            {% endif %}
+        </div>
+    </div>
 </div>
+</div>
+
+<script>
+    const answers = {
+        {% for question_id, question_data in result.items %}
+        "{{ question_id|slugify }}": {
+            "correct_option": "{{ question_data.correct_option }}",
+            "explanation": "{{ question_data.Explanation }}"
+        },
+        {% endfor %}
+    };
+
+    function checkAnswer(questionId, selectedOption) {
+        const explanationElement = document.getElementById(`explanation_${questionId}`);
+        const correctOption = answers[questionId].correct_option;
+        const explanation = answers[questionId].explanation;
+
+        if (selectedOption === correctOption) {
+            explanationElement.textContent = "Correct! " + explanation;
+        } else {
+            explanationElement.textContent = "Incorrect. " + explanation;
+        }
+
+        explanationElement.style.display = "block";
+    }
+</script>
 {% endblock %}

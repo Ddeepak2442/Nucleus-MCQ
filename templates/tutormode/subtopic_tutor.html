@@ -9,7 +9,7 @@
                     {% for subtopic in subtopics %}
                     <div class="col-12 col-md-11 mb-3">
                         <div class="card shadow p-3 hovered ">
-                            <a href="{% url 'note' subject_slug=subject.slug topic_slug=topic.slug sub_topic_name=subtopic.slug %}
+                            <a href="{% url 'note' subject_slug=subject.slug topic_slug=topic.slug sub_topic_slug=subtopic.slug %}
                             " style="color:black;">
                                 <div class="d-flex justify-content-between hovered " style="align-items: center;">
                                    <div class= "d-flex pt-3">
